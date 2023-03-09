@@ -8,7 +8,6 @@ resource "aws_iam_user_policy" "backend" {
   policy = data.aws_iam_policy_document.backend.json
 }
 
-
 data "aws_iam_policy_document" "backend" {
   statement {
     actions = [
