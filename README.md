@@ -10,6 +10,7 @@ I have a number of fairly foundational Terraform projects that don't belong to a
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `terraform-backend` | An AWS backend for all my other Terraform projects to use                                                                    |
 | `vault`             | My self-hosted [Hashicorp Vault](https://www.hashicorp.com/products/vault) instance for credential management in my projects |
+| `elastic-ci-stack`  | Autoscaling Buildkite agents, plus secrets needed by my Buildkite pipelines                                                  |
 
 Each project is deployed by its own `Makefile`.
 
