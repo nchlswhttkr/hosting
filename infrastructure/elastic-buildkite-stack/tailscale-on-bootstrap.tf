@@ -33,51 +33,6 @@ data "vault_kv_secret_v2" "tailscale" {
   name  = "nchlswhttkr/tailscale"
 }
 
-resource "aws_iam_policy" "bootstrap_tailscale" {
-  name   = "BootstrapTailscaleOnElasticBuildkite"
-  policy = data.aws_iam_policy_document.read_bootstrap_script.json
-}
-
-data "aws_iam_policy_document" "read_bootstrap_script" {
-  statement {
-    sid = "ReadBootstrapScript"
-
-    actions = [
-      "s3:GetObject"
-    ]
-
-    resources = [
-      "${aws_s3_bucket.bootstrap.arn}/${aws_s3_object.bootstrap_script.id}"
-    ]
-  }
-
-  statement {
-    sid = "ReadTailscaleAuthenticationKey"
-
-    actions = [
-      "ssm:GetParameter"
-    ]
-
-    resources = [
-      aws_ssm_parameter.tailscale_authentication_key.arn,
-      aws_ssm_parameter.vault_role_id.arn,
-      aws_ssm_parameter.vault_secret_id.arn
-    ]
-  }
-
-  statement {
-    sid = "DecryptTailscaleAuthenticationKey"
-
-    actions = [
-      "kms:Decrypt"
-    ]
-
-    resources = [
-      data.aws_kms_key.ssm_default.arn
-    ]
-  }
-}
-
 data "aws_kms_key" "ssm_default" {
   key_id = "alias/aws/ssm"
 }

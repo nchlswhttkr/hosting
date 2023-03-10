@@ -12,7 +12,7 @@ resource "aws_cloudformation_stack" "buildkite" {
     RootVolumeSize     = 20
     OnDemandPercentage = 0
     BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.bootstrap_script.id}"
-    ManagedPolicyARN   = aws_iam_policy.bootstrap_tailscale.arn
+    ManagedPolicyARN   = aws_iam_policy.buildkite_agent.arn
 
     # Buildkite agent settings
     AgentsPerInstance         = 2

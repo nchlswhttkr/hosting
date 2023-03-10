@@ -34,15 +34,30 @@ terraform {
   }
 }
 
+locals {
+  aws_tags = {
+    Project = "Elastic Buildkite Stack"
+  }
+}
+
 provider "aws" {
   region     = "us-east-1"
   access_key = data.vault_aws_access_credentials.creds.access_key
   secret_key = data.vault_aws_access_credentials.creds.secret_key
   token      = data.vault_aws_access_credentials.creds.security_token
   default_tags {
-    tags = {
-      Project = "Elastic Buildkite Stack"
-    }
+    tags = local.aws_tags
+  }
+}
+
+provider "aws" {
+  alias      = "melbourne"
+  region     = "ap-southeast-4"
+  access_key = data.vault_aws_access_credentials.creds.access_key
+  secret_key = data.vault_aws_access_credentials.creds.secret_key
+  token      = data.vault_aws_access_credentials.creds.security_token
+  default_tags {
+    tags = local.aws_tags
   }
 }
 
