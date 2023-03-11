@@ -77,3 +77,17 @@ data "pass_password" "bandcamp_mini_embed_cloudflare_api_token" {
 data "pass_password" "bandcamp_mini_embed_cloudflare_account_id" {
   name = "bandcamp-mini-embed/cloudflare-account-id"
 }
+
+resource "aws_s3_object" "terrarium_environment" {
+  bucket                 = aws_cloudformation_stack.buildkite.outputs.ManagedSecretsBucket
+  key                    = "terrarium/environment"
+  server_side_encryption = "aws:kms"
+  content                = <<-EOF
+    #!/bin/bash
+    set -euo pipefail
+    VAULT_ROLE_ID="$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.vault_role_id.name}" | jq --raw-output ".Parameter.Value")"
+    VAULT_SECRET_ID="$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.vault_secret_id.name}" | jq --raw-output ".Parameter.Value")"
+    export VAULT_ADDR="http://phoenix:8200"
+    export VAULT_TOKEN="$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")"
+  EOF
+}

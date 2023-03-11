@@ -3,6 +3,7 @@ locals {
     "bandcamp-mini-embed"     = "bandcamp-mini-embed"
     "terraform-provider-pass" = "terraform-provider-pass"
     "website"                 = "website"
+    "terrarium"               = "terrarium"
   }
 }
 
@@ -21,6 +22,7 @@ resource "aws_s3_object" "ssh_deploy_key" {
   content                = tls_private_key.ssh_deploy_key[each.key].private_key_openssh
 }
 
+# TODO: Fix this resource name
 resource "github_repository_deploy_key" "terraform_provider_pass" {
   for_each = local.deploy_key_for_pipeline_to_repo
 
