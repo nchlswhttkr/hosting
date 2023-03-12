@@ -15,7 +15,7 @@ resource "aws_s3_object" "bootstrap_script" {
         sudo yum install -y tailscale
         sudo systemctl enable --now tailscaled
         sudo yum-config-manager -y --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-        sudo yum -y install vault
+        sudo yum -y install terraform vault
 
         TAILSCALE_AUTHENTICATION_KEY=$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.tailscale_authentication_key.name}" | jq --raw-output ".Parameter.Value")
         sudo tailscale up --authkey "$TAILSCALE_AUTHENTICATION_KEY" --hostname "buildkite"
