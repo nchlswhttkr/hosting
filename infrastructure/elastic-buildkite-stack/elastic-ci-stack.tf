@@ -15,7 +15,6 @@ resource "aws_cloudformation_stack" "buildkite" {
     ManagedPolicyARN   = aws_iam_policy.buildkite_agent.arn
 
     # Buildkite agent settings
-    AgentsPerInstance         = 2
     ScaleInIdlePeriod         = 300 # 5 minutes
     BuildkiteAgentExperiments = "ansi-timestamps,resolve-commit-after-checkout"
   }
