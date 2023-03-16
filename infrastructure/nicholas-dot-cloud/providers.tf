@@ -1,10 +1,5 @@
 terraform {
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-
     digitalocean = {
       source  = "digitalocean/digitalocean"
       version = "~> 2.10"
@@ -34,42 +29,6 @@ terraform {
     key            = "nicholas-dot-cloud"
     region         = "ap-southeast-4"
   }
-}
-
-locals {
-  aws_tags = {
-    Project = "Website Previews"
-  }
-}
-
-provider "aws" {
-  region     = "ap-southeast-2"
-  access_key = data.vault_aws_access_credentials.creds.access_key
-  secret_key = data.vault_aws_access_credentials.creds.secret_key
-  token      = data.vault_aws_access_credentials.creds.security_token
-  default_tags {
-    tags = local.aws_tags
-  }
-}
-
-provider "aws" {
-  # https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cnames-and-https-requirements.html#https-requirements-certificate-issuer
-  # To use an ACM certificate with CloudFront, make sure you request (or import) the certificate in the US East (N. Virginia) Region (us-east-1).
-
-  alias      = "us_tirefire_1" # https://twitter.com/grepory/status/759204528382210049
-  region     = "us-east-1"
-  access_key = data.vault_aws_access_credentials.creds.access_key
-  secret_key = data.vault_aws_access_credentials.creds.secret_key
-  token      = data.vault_aws_access_credentials.creds.security_token
-  default_tags {
-    tags = local.aws_tags
-  }
-}
-
-data "vault_aws_access_credentials" "creds" {
-  backend = "aws"
-  role    = "Terraform"
-  type    = "sts"
 }
 
 provider "digitalocean" {
