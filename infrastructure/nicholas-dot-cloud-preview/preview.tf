@@ -14,12 +14,16 @@ resource "aws_s3_bucket_website_configuration" "preview" {
 }
 
 resource "aws_s3_object" "bucket_documents" {
-  for_each = toset(["index.html", "robots.txt"])
+  for_each = {
+    "index.html" = "text/html",
+    "robots.txt" = "text/plain"
+  }
 
-  bucket = aws_s3_bucket.preview.bucket
-  key    = each.key
-  source = "./preview-${each.key}"
-  etag   = filemd5("./preview-${each.key}")
+  bucket       = aws_s3_bucket.preview.bucket
+  key          = each.key
+  source       = "./preview-${each.key}"
+  content_type = each.value
+  etag         = filemd5("./preview-${each.key}")
 }
 
 resource "aws_s3_bucket_public_access_block" "public_access_block" {
@@ -98,7 +102,7 @@ locals {
 
 resource "aws_cloudfront_distribution" "preview_distribution" {
   origin {
-    domain_name = aws_s3_bucket.preview.website_endpoint
+    domain_name = aws_s3_bucket_website_configuration.preview.website_endpoint
     origin_id   = local.preview_bucket_origin_id
     custom_origin_config {
       http_port              = 80
