@@ -58,15 +58,13 @@ data "aws_iam_policy_document" "buildkite_agent" {
   }
 
   statement {
-    sid = "ReadVaultCredentials"
+    sid = "ReadVaultAuthenticationCredentials"
 
     actions = [
       "ssm:GetParameter"
     ]
 
     resources = [
-      aws_ssm_parameter.tailscale_authentication_key.arn,
-      aws_ssm_parameter.vault_role_id.arn,
       aws_ssm_parameter.vault_secret_id.arn
     ]
   }

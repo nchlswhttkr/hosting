@@ -9,8 +9,8 @@ resource "aws_s3_object" "bootstrap_script" {
         #!/bin/bash
         set -euo pipefail
 
-        sudo yum update -y gnupg2
-        sudo yum install -y yum-utils
+        sudo yum update -y
+        sudo yum install -y yum-utils gnupg2
         sudo yum-config-manager -y --add-repo https://pkgs.tailscale.com/stable/amazon-linux/2/tailscale.repo
         sudo yum install -y tailscale
         sudo systemctl enable --now tailscaled

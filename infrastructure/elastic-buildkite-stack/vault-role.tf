@@ -1,9 +1,3 @@
-resource "aws_ssm_parameter" "vault_role_id" {
-  name  = "/elastic-buildkite-stack/vault-role-id"
-  type  = "SecureString"
-  value = vault_approle_auth_backend_role.buildkite.role_id
-}
-
 resource "aws_ssm_parameter" "vault_secret_id" {
   name  = "/elastic-buildkite-stack/vault-secret-id"
   type  = "SecureString"

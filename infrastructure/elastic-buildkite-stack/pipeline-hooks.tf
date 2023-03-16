@@ -1,32 +1,3 @@
-resource "aws_s3_object" "terraform_provider_pass_environment" {
-  bucket                 = aws_cloudformation_stack.buildkite.outputs.ManagedSecretsBucket
-  key                    = "terraform-provider-pass/environment"
-  server_side_encryption = "aws:kms"
-  content                = <<-EOF
-    #!/bin/bash
-    set -euo pipefail
-    export BUILDKITE_GIT_FETCH_FLAGS="-v --prune --tags"
-
-    if [[ "$BUILDKITE_STEP_KEY" == "release" ]]; then
-      export GITHUB_ACCESS_TOKEN="${data.pass_password.terraform_provider_pass_github_access_token.password}"
-      export GPG_SIGNING_KEY="${data.pass_password.terraform_provider_pass_gpg_signing_key.password}"
-      export GPG_SIGNING_KEY_PASSPHRASE="${data.pass_password.terraform_provider_pass_gpg_signing_key_passphrase.password}"
-    fi
-  EOF
-}
-
-data "pass_password" "terraform_provider_pass_github_access_token" {
-  name = "terraform-provider-pass/github-access-token"
-}
-
-data "pass_password" "terraform_provider_pass_gpg_signing_key" {
-  name = "terraform-provider-pass/gpg-signing-key"
-}
-
-data "pass_password" "terraform_provider_pass_gpg_signing_key_passphrase" {
-  name = "terraform-provider-pass/gpg-signing-key-passphrase"
-}
-
 resource "aws_s3_object" "website_environment" {
   bucket                 = aws_cloudformation_stack.buildkite.outputs.ManagedSecretsBucket
   key                    = "website/environment"
@@ -78,16 +49,21 @@ data "pass_password" "bandcamp_mini_embed_cloudflare_account_id" {
   name = "bandcamp-mini-embed/cloudflare-account-id"
 }
 
-resource "aws_s3_object" "terrarium_environment" {
+resource "aws_s3_object" "agent_environment" {
   bucket                 = aws_cloudformation_stack.buildkite.outputs.ManagedSecretsBucket
-  key                    = "terrarium/environment"
+  key                    = "environment"
   server_side_encryption = "aws:kms"
   content                = <<-EOF
     #!/bin/bash
     set -euo pipefail
-    VAULT_ROLE_ID="$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.vault_role_id.name}" | jq --raw-output ".Parameter.Value")"
-    VAULT_SECRET_ID="$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.vault_secret_id.name}" | jq --raw-output ".Parameter.Value")"
-    export VAULT_ADDR="http://phoenix:8200"
-    export VAULT_TOKEN="$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")"
+
+    export BUILDKITE_GIT_FETCH_FLAGS="-v --prune --tags"
+
+    if [[ "$${VAULT_ROLE_ID:-}" != "" ]]; then
+      VAULT_SECRET_ID="$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.vault_secret_id.name}" | jq --raw-output ".Parameter.Value")"
+      export VAULT_ADDR="http://phoenix:8200"
+      export VAULT_TOKEN="$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")"
+      unset VAULT_SECRET_ID
+    fi
   EOF
 }
