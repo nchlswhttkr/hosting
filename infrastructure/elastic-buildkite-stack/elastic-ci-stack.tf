@@ -14,6 +14,11 @@ resource "aws_cloudformation_stack" "buildkite" {
     BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.bootstrap_script.id}"
     ManagedPolicyARN   = aws_iam_policy.buildkite_agent.arn
 
+    # Misc
+    EnableCostAllocationTags = true
+    CostAllocationTagName    = "Project"
+    CostAllocationTagValue   = local.aws_tags["Project"]
+
     # Buildkite agent settings
     ScaleInIdlePeriod         = 300 # 5 minutes
     BuildkiteAgentExperiments = "ansi-timestamps,resolve-commit-after-checkout"
