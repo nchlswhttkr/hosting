@@ -2,7 +2,7 @@
 
 Infrastructure, playbooks and configuration for self-hosted services I run.
 
-## Terraform
+## Infrastructure
 
 I have a number of fairly foundational Terraform projects that don't belong to any particular project repositories, so I keep them here.
 
@@ -18,4 +18,13 @@ Each project is deployed by its own `Makefile`.
 
 ```sh
 make -C infrastructure/terraform-backend
+```
+
+## Playbooks
+
+I manage most of my self-hosted software through Ansible playbooks.
+
+```sh
+make -C playbooks install
+make -C playbooks inventory
 ```

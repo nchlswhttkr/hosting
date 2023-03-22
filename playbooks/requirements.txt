@@ -1,0 +1,4 @@
+ansible ~= 6.0
+black ~= 23.1
+passlib ~= 1.7.4
+requests ~= 2.28
