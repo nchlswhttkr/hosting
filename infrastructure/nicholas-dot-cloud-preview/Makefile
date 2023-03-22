@@ -14,5 +14,8 @@ apply: init
 init:
 	@$(terraform) init
 
+upgrade:
+	@$(terraform) init -upgrade
+
 destroy: init
 	@$(terraform) destroy
