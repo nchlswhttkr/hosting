@@ -60,7 +60,7 @@ resource "aws_s3_object" "agent_environment" {
     export BUILDKITE_GIT_FETCH_FLAGS="-v --prune --tags"
 
     if [[ "$${VAULT_ROLE_ID:-}" != "" ]]; then
-      VAULT_SECRET_ID="$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.vault_secret_id.name}" | jq --raw-output ".Parameter.Value")"
+      VAULT_SECRET_ID="$(aws ssm get-parameter --with-decryption --name "/elastic-buildkite-stack/vault-secret-id/$VAULT_ROLE_ID" | jq --raw-output ".Parameter.Value")"
       export VAULT_ADDR="http://phoenix:8200"
       export VAULT_TOKEN="$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")"
       unset VAULT_SECRET_ID

@@ -1,5 +1,5 @@
 resource "aws_ssm_parameter" "vault_secret_id" {
-  name  = "/elastic-buildkite-stack/vault-secret-id"
+  name  = "/elastic-buildkite-stack/vault-secret-id/${vault_approle_auth_backend_role.buildkite.role_id}"
   type  = "SecureString"
   value = vault_approle_auth_backend_role_secret_id.buildkite.secret_id
 }
