@@ -1,0 +1,23 @@
+steps:
+  - label: ":plausible: Back up Plausible instance"
+    command: .buildkite/$BUILDKITE_PIPELINE_SLUG/backup.sh
+    concurrency_group: $BUILDKITE_PIPELINE_SLUG/backup
+    concurrency: 1
+    env:
+      VAULT_ROLE_ID: 703f9e62-1225-507b-ab21-9b762f8db482
+    artifact_paths:
+      - playbooks/backups/**/*.tar
+    plugins:
+      - docker-compose#v3.10.0:
+          run: ci
+          config: .buildkite/docker-compose.yml
+          env:
+            - VAULT_ADDR
+            - VAULT_TOKEN
+
+  - wait
+
+  - label: ":aws: Upload backup to S3"
+    command: .buildkite/$BUILDKITE_PIPELINE_SLUG/upload.sh
+    env:
+      VAULT_ROLE_ID: 703f9e62-1225-507b-ab21-9b762f8db482
