@@ -12,7 +12,7 @@ if "--list" not in sys.argv:
 vault_address = os.environ["VAULT_ADDR"]
 vault_token = os.environ["VAULT_TOKEN"]
 token = requests.get(
-    f"{vault_address}/v1/kv/data/nchlswhttkr/tailscale",
+    f"{vault_address}/v1/kv/data/buildkite/website/tailscale",
     headers={"Authorization": f"Bearer {vault_token}"},
 ).json()["data"]["data"]["api_token"]
 

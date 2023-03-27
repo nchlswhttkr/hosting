@@ -61,9 +61,22 @@ resource "aws_s3_object" "agent_environment" {
 
     if [[ "$${VAULT_ROLE_ID:-}" != "" ]]; then
       VAULT_SECRET_ID="$(aws ssm get-parameter --with-decryption --name "/elastic-buildkite-stack/vault-secret-id/$VAULT_ROLE_ID" | jq --raw-output ".Parameter.Value")"
-      export VAULT_ADDR="http://phoenix:8200"
-      export VAULT_TOKEN="$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")"
+      VAULT_ADDR="http://phoenix:8200"
+      export VAULT_ADDR
+      VAULT_TOKEN="$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")"
+      export VAULT_TOKEN
       unset VAULT_SECRET_ID
+    fi
+
+    if [[ "$${VAULT_ASSUME_AWS_ROLE:-}" != "" ]]; then
+      AWS_CREDENTIALS="$(vault read -format=json "aws/sts/$VAULT_ASSUME_AWS_ROLE")"
+      AWS_ACCESS_KEY_ID="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.access_key)"
+      export AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.secret_key)"
+      export AWS_SECRET_ACCESS_KEY
+      AWS_SESSION_TOKEN="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.security_token)"
+      export AWS_SESSION_TOKEN
+      unset AWS_CREDENTIALS
     fi
   EOF
 }
