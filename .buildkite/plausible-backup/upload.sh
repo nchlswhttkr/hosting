@@ -8,7 +8,7 @@ AWS_ACCESS_KEY_ID="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.access_key)
 export AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.secret_key)"
 export AWS_SECRET_ACCESS_KEY
-AWS_SESSION_TOKEN="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.session_token)"
+AWS_SESSION_TOKEN="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.security_token)"
 export AWS_SESSION_TOKEN
 
 echo "--- Downloading backup artifact"
