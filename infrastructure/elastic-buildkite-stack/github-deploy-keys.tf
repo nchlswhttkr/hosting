@@ -1,9 +1,10 @@
 locals {
   deploy_key_for_pipeline_to_repo = {
-    "bandcamp-mini-embed"     = "bandcamp-mini-embed"
-    "terraform-provider-pass" = "terraform-provider-pass"
-    "website"                 = "website"
-    "terrarium"               = "terrarium"
+    "bandcamp-mini-embed"      = "bandcamp-mini-embed"
+    "terraform-provider-pass"  = "terraform-provider-pass"
+    "website"                  = "website"
+    "terrarium"                = "terrarium"
+    "hosting-plausible-backup" = "hosting"
   }
 }
 
