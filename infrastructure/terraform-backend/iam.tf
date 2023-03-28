@@ -3,6 +3,7 @@ resource "aws_iam_user" "backend" {
   name = "TerraformBackend"
 }
 
+# TODO: Make this a general policy so other projects can use it
 resource "aws_iam_user_policy" "backend" {
   user   = aws_iam_user.backend.name
   policy = data.aws_iam_policy_document.backend.json

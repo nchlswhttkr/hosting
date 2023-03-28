@@ -1,3 +1,5 @@
+# TODO: Use an account SSH key with create/destroy provisioners
+
 locals {
   deploy_key_for_pipeline_to_repo = {
     "bandcamp-mini-embed"      = "bandcamp-mini-embed"
