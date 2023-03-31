@@ -1,36 +1,25 @@
-# TODO: Use an account SSH key with create/destroy provisioners
+resource "tls_private_key" "github_ssh_key" {
+  algorithm = "ED25519"
 
-locals {
-  deploy_key_for_pipeline_to_repo = {
-    "bandcamp-mini-embed"      = "bandcamp-mini-embed"
-    "terraform-provider-pass"  = "terraform-provider-pass"
-    "website"                  = "website"
-    "terrarium"                = "terrarium"
-    "hosting-plausible-backup" = "hosting"
+  provisioner "local-exec" {
+    command = "./github-create-ssh-key.sh"
+    environment = {
+      SSH_PUBLIC_KEY = trimspace(self.public_key_openssh)
+    }
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "./github-delete-ssh-key.sh"
+    environment = {
+      SSH_PUBLIC_KEY = trimspace(self.public_key_openssh)
+    }
   }
 }
 
-resource "tls_private_key" "ssh_deploy_key" {
-  for_each = local.deploy_key_for_pipeline_to_repo
-
-  algorithm = "ED25519"
-}
-
-resource "aws_s3_object" "ssh_deploy_key" {
-  for_each = local.deploy_key_for_pipeline_to_repo
-
+resource "aws_s3_object" "github_ssh_key" {
   bucket                 = aws_cloudformation_stack.buildkite.outputs.ManagedSecretsBucket
-  key                    = "${each.key}/private_ssh_key"
+  key                    = "private_ssh_key"
   server_side_encryption = "aws:kms"
-  content                = tls_private_key.ssh_deploy_key[each.key].private_key_openssh
-}
-
-# TODO: Fix this resource name
-resource "github_repository_deploy_key" "terraform_provider_pass" {
-  for_each = local.deploy_key_for_pipeline_to_repo
-
-  title      = "Allow SSH access to ${each.value} from Buildkite pipeline ${each.key}"
-  repository = each.value
-  read_only  = true
-  key        = tls_private_key.ssh_deploy_key[each.key].public_key_openssh
+  content                = tls_private_key.github_ssh_key.private_key_openssh
 }

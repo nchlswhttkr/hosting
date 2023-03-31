@@ -5,11 +5,6 @@ terraform {
       version = ">= 4.0"
     }
 
-    github = {
-      source  = "integrations/github"
-      version = ">= 4.0"
-    }
-
     pass = {
       source  = "nicholas.cloud/nchlswhttkr/pass"
       version = ">= 0.1"
@@ -69,15 +64,6 @@ data "vault_aws_access_credentials" "creds" {
 
 provider "pass" {
   store = "/Users/nchlswhttkr/Google Drive/.password-store"
-}
-
-provider "github" {
-  token = data.vault_kv_secret_v2.github.data.access_token
-}
-
-data "vault_kv_secret_v2" "github" {
-  mount = "kv"
-  name  = "nchlswhttkr/github"
 }
 
 provider "vault" {}
