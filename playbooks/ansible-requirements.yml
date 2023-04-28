@@ -3,3 +3,5 @@ collections:
     version: ">=5.0"
   - name: community.hashi_vault
     version: ">=4.1"
+  - name: community.crypto
+    version: ">=2.11"
