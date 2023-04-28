@@ -43,16 +43,16 @@ server {
         location /blips/ {
             rewrite ^/blips/(.*) /blog/$1 permanent;
         }
+
+        # Serve random sprites of Niko on each request
+        location /files/niko/ {
+            random_index on;
+            add_header "Cache-Control" "no-store";
+        }
     }
 
     location = /niko.png {
-        rewrite ^ /niko/ last;
-    }
-
-    location /niko/ {
-        root /var/www/nicholas.cloud/files/;
-        random_index on;
-        add_header "Cache-Control" "no-store";
+        rewrite ^ /files/niko/ last;
     }
 }
 
