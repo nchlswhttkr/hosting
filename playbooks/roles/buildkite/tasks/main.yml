@@ -1,0 +1,59 @@
+- name: Ensure required directories exists
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /home/buildkite/.buildkite-agent
+    - /home/buildkite/.config/systemd/user/
+
+- name: Download and install Buildkite agent
+  when: ansible_local.buildkite.versions.buildkite_agent_version|d != buildkite_agent_version
+  register: install_buildkite_agent
+  ansible.builtin.unarchive:
+    dest: /home/buildkite/.buildkite-agent
+    remote_src: true
+    # TODO: Get architecture dynamically instead of hardcoding it
+    src: "https://github.com/buildkite/agent/releases/download/v{{buildkite_agent_version}}/buildkite-agent-linux-arm64-{{ buildkite_agent_version}}.tar.gz"
+
+- name: Configure Buildkite agent
+  register: configure_buildkite_agent
+  vars:
+    buildkite_agent_token: "{{ lookup('community.general.passwordstore', 'website/buildkite-agent-token') }}"
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - src: ../templates/buildkite-agent.cfg
+      dest: /home/buildkite/.buildkite-agent/buildkite-agent.cfg
+      mode: "0600"
+    - src: ../templates/buildkite-agent.service
+      dest: /home/buildkite/.config/systemd/user/buildkite-agent.service
+      mode: "0644"
+
+- name: Get Buildkite user ID
+  when: install_buildkite_agent.changed or configure_buildkite_agent.changed
+  register: get_id
+  ansible.builtin.shell: id -u
+
+- name: Restart Buildkite agent service
+  when: install_buildkite_agent.changed or configure_buildkite_agent.changed
+  ansible.builtin.systemd:
+    name: buildkite-agent
+    scope: user
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  environment:
+    # Fixes units not starting up when run activated by Ansible
+    # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_service_module.html#parameter-scope
+    XDG_RUNTIME_DIR: "/run/user/{{ get_id.stdout }}"
+
+- name: Set Buildkite version
+  when: ansible_local.buildkite.versions.buildkite_agent_version|d != buildkite_agent_version
+  become_user: root
+  community.general.ini_file:
+    path: /etc/ansible/facts.d/buildkite.fact
+    section: versions
+    option: buildkite_agent_version
+    value: "{{ buildkite_agent_version }}"

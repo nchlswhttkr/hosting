@@ -1,0 +1,22 @@
+- name: Deploy Boyd
+  hosts: boyd
+  vars:
+    ansible_user: root
+  gather_facts: false
+  pre_tasks:
+    - name: Gather local facts
+      ansible.builtin.setup:
+        gather_subset: local
+    - name: Create Buildkite user
+      register: create_user
+      become: true
+      ansible.builtin.user:
+        name: buildkite
+        shell: /bin/bash
+    - name: Enable linger for Buildkite user
+      when: create_user.changed
+      ansible.builtin.shell: loginctl enable-linger buildkite
+  roles:
+    - role: buildkite
+      become: yes
+      become_user: buildkite

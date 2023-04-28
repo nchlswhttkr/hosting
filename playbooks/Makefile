@@ -17,5 +17,8 @@ inventory:
 deploy:
 	@$(venv) && ansible-playbook --inventory inventory.py deploy.yml
 
+boyd:
+	@$(venv) && ansible-playbook --inventory inventory.py boyd.yml
+
 backup-plausible:
 	@$(venv) && ansible-playbook --inventory inventory.py backup-plausible.yml --extra-vars "date_path='$$(date -u "+%Y/%m/%d/%H:%M:%S")'"
