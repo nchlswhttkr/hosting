@@ -1,0 +1,12 @@
+[Unit]
+Description=Writefreely
+Documentation=https://writefreely.org/docs
+After=network.target
+
+[Service]
+ExecStart=/home/write/writefreely/writefreely
+ExecStartPre=/home/write/writefreely/writefreely keys generate
+WorkingDirectory=/home/write/writefreely
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,79 @@
+- name: Ensure required directories exists
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /home/buildkite/.buildkite-agent/
+    - /home/buildkite/.config/systemd/user/
+    - /home/buildkite/.ssh/
+
+- name: Download and install Buildkite agent
+  register: install_buildkite_agent
+  ansible.builtin.unarchive:
+    dest: /home/buildkite/.buildkite-agent
+    remote_src: true
+    # TODO: Get architecture dynamically instead of hardcoding it
+    src: "https://github.com/buildkite/agent/releases/download/v{{buildkite_agent_version}}/buildkite-agent-linux-arm64-{{ buildkite_agent_version}}.tar.gz"
+
+- name: Copy Buildkite agent token
+  register: copy_buildkite_agent_token
+  vars:
+    buildkite_agent_token: "{{ lookup('community.general.passwordstore', 'website/buildkite-agent-token') }}"
+  ansible.builtin.copy:
+    content: |
+      BUILDKITE_AGENT_TOKEN="{{ buildkite_agent_token }}"
+    dest: /home/buildkite/.env
+    mode: "0600"
+
+- name: Configure Buildkite agent
+  register: configure_buildkite_agent
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: "{{ playbook_dir }}/buildkite-agent.cfg"
+      dest: /home/buildkite/buildkite-agent.cfg
+    - src: buildkite-agent.service.j2
+      dest: /home/buildkite/.config/systemd/user/buildkite-agent.service
+
+- name: Generate SSH keys to clone from GitHub
+  register: generate_ssh_key
+  community.crypto.openssh_keypair:
+    path: /home/buildkite/.ssh/id_ed25519
+    mode: "0600"
+    type: ed25519
+
+- name: Upload SSH key to GitHub
+  when: generate_ssh_key.changed
+  vars:
+    github_api_token: "{{ lookup('community.hashi_vault.vault_read', 'kv/data/nchlswhttkr/github').data.data.access_token }}"
+  ansible.builtin.uri:
+    url: https://api.github.com/user/keys
+    method: POST
+    headers:
+      Accept: application/vnd.github+json
+      Authorization: Bearer {{ github_api_token }}
+      X-GitHub-Api-Version: "2022-11-28"
+    body_format: json
+    body:
+      title: Boyd on {{ now().strftime("%Y-%m-%d") }}
+      key: "{{ generate_ssh_key.public_key }}"
+    status_code: [201]
+
+- name: Get Buildkite user ID
+  when: install_buildkite_agent.changed or copy_buildkite_agent_token.changed or configure_buildkite_agent.changed
+  register: get_id
+  ansible.builtin.shell: id -u
+
+- name: Restart Buildkite agent service
+  when: install_buildkite_agent.changed or copy_buildkite_agent_token.changed or configure_buildkite_agent.changed
+  ansible.builtin.systemd:
+    name: buildkite-agent
+    scope: user
+    state: restarted
+    enabled: true
+    daemon_reload: true
+  environment:
+    # Fixes units not starting up when run activated by Ansible
+    # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_service_module.html#parameter-scope
+    XDG_RUNTIME_DIR: "/run/user/{{ get_id.stdout }}"

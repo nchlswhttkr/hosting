@@ -1,0 +1,35 @@
+- name: Install Nginx
+  become: true
+  ansible.builtin.apt:
+    name:
+      - nginx-extras
+    state: latest
+
+- name: Configure Nginx
+  register: configure_nginx
+  become: true
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/{{ nginx_hostname }}.nginx"
+    dest: /etc/nginx/sites-enabled/{{ nginx_hostname }}
+
+- name: Check for presence of TLS certificates
+  register: check_tls_certificates
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/live/{{ nginx_hostname }}/privkey.pem
+
+- name: Pause until TLS certificates are created
+  when: not check_tls_certificates.stat.exists
+  ansible.builtin.pause:
+
+# TODO: Add a rescue option to restore a backup of Nginx config/certs
+- name: Validate Nginx configuration
+  when: configure_nginx.changed
+  become: true
+  ansible.builtin.shell: nginx -t
+
+- name: Restart Nginx
+  when: configure_nginx.changed
+  become: true
+  ansible.builtin.systemd:
+    name: nginx
+    state: restarted

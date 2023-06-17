@@ -12,7 +12,7 @@ I automate some maintenance tasks with Buildkite.
 
 ## Infrastructure
 
-I have a number of fairly foundational Terraform projects that don't belong to any particular project repositories, so I keep them here.
+I have a number of Terraform projects that don't belong to any particular project repositories, so I keep them here.
 
 |                              |                                                                             |
 | ---------------------------- | --------------------------------------------------------------------------- |
@@ -28,11 +28,14 @@ Each project is deployed by its own `Makefile`.
 make -C infrastructure/terraform-backend
 ```
 
-## Playbooks
+## Self-hosted Deployments
 
-I manage most of my self-hosted software through Ansible playbooks.
+I self-host a number of personal projects and services, and predominantly manage these with Ansible.
+
+- `boyd` - A Raspberry Pi 3 Model A+ sitting on my desk
+  - A [Buildkite agent](https://buildkite.com/) dedicated to uploading pipeline files
+  - A [Writefreely](https://writefreely.org/) instance available to my Tailnet at https://write.nicholas.cloud/
 
 ```sh
-make -C playbooks install
-make -C playbooks inventory
+make -C deploy/boyd
 ```
