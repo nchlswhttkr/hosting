@@ -8,7 +8,7 @@ resource "aws_cloudformation_stack" "buildkite" {
 
     # Auto-scaling EC2 instances
     MaxSize            = 3
-    InstanceType       = "t3a.micro"
+    InstanceType       = "t3a.small"
     RootVolumeSize     = 20
     OnDemandPercentage = 0
     BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.bootstrap_script.id}"
@@ -20,6 +20,7 @@ resource "aws_cloudformation_stack" "buildkite" {
     CostAllocationTagValue   = local.aws_tags["Project"]
 
     # Buildkite agent settings
+    AgentsPerInstance         = 2
     ScaleInIdlePeriod         = 300 # 5 minutes
     BuildkiteAgentExperiments = "ansi-timestamps,resolve-commit-after-checkout"
   }
