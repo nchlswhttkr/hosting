@@ -29,19 +29,11 @@
     - src: writefreely.service.j2
       dest: /home/write/.config/systemd/user/write.service
 
-- name: Get Write user ID
-  when: install_writefreely.changed or configure_writefreely.changed
-  register: get_id
-  ansible.builtin.shell: id -u write
-
 - name: Restart Writefreely service
   when: install_writefreely.changed or configure_writefreely.changed
   ansible.builtin.systemd:
     name: write
     scope: user
     state: restarted
+    enabled: true
     daemon_reload: true
-  environment:
-    # Fixes units not starting up when run activated by Ansible
-    # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_service_module.html#parameter-scope
-    XDG_RUNTIME_DIR: "/run/user/{{ get_id.stdout }}"

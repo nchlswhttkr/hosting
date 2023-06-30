@@ -1,21 +1,19 @@
 - name: Deploy Buildkite agent
   hosts: boyd
-  become: true
-  vars:
-    ansible_user: root
   gather_facts: false
   pre_tasks:
     - name: Create Buildkite user
+      become: true
       register: create_user
       ansible.builtin.user:
         name: buildkite
         shell: /bin/bash
     - name: Enable linger for Buildkite user
+      become: true
       when: create_user.changed
       ansible.builtin.shell: loginctl enable-linger buildkite
   roles:
     - role: ../../roles/buildkite
-      become: true
-      become_user: buildkite
+      remote_user: buildkite
       vars:
         buildkite_agent_version: "3.48.0"

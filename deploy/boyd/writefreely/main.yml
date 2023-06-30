@@ -1,22 +1,20 @@
 - name: Deploy Writefreely instance
   hosts: boyd
-  become: true
-  vars:
-    ansible_user: root
   gather_facts: false
   pre_tasks:
     - name: Create Write user
+      become: true
       register: create_user
       ansible.builtin.user:
         name: write
         shell: /bin/bash
     - name: Enable linger for Write user
+      become: true
       when: create_user.changed
       ansible.builtin.shell: loginctl enable-linger write
   roles:
     - role: ../../roles/writefreely
-      become: true
-      become_user: write
+      remote_user: write
       vars:
         writefreely_version: "0.13.1"
     - role: ../../roles/nginx

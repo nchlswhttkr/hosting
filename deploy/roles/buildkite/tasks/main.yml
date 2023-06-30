@@ -60,11 +60,6 @@
       key: "{{ generate_ssh_key.public_key }}"
     status_code: [201]
 
-- name: Get Buildkite user ID
-  when: install_buildkite_agent.changed or copy_buildkite_agent_token.changed or configure_buildkite_agent.changed
-  register: get_id
-  ansible.builtin.shell: id -u
-
 - name: Restart Buildkite agent service
   when: install_buildkite_agent.changed or copy_buildkite_agent_token.changed or configure_buildkite_agent.changed
   ansible.builtin.systemd:
@@ -73,7 +68,3 @@
     state: restarted
     enabled: true
     daemon_reload: true
-  environment:
-    # Fixes units not starting up when run activated by Ansible
-    # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_service_module.html#parameter-scope
-    XDG_RUNTIME_DIR: "/run/user/{{ get_id.stdout }}"
