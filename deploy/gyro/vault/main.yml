@@ -1,0 +1,23 @@
+- name: Deploy Vault instance
+  hosts: gyro
+  gather_facts: false
+  pre_tasks:
+    - name: Create Vault user
+      become: true
+      register: create_user
+      ansible.builtin.user:
+        name: vault
+        shell: /bin/bash
+    - name: Enable linger for Vault user
+      become: true
+      when: create_user.changed
+      ansible.builtin.shell: loginctl enable-linger vault
+  roles:
+    - role: ../../roles/vault
+      remote_user: vault
+      vars:
+        vault_version: "1.14.0"
+    - role: ../../roles/nginx
+      become: true
+      vars:
+        nginx_hostname: "vault.nicholas.cloud"

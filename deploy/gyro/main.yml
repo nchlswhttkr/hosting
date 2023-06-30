@@ -1,0 +1,21 @@
+- name: Deploy Gyro
+  hosts: gyro
+  gather_facts: false
+  pre_tasks:
+    - name: Install general tools and libraries
+      become: true
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - git
+          - jq
+        state: latest
+    - name: Keep system packages up to date
+      become: true
+      ansible.builtin.apt:
+        autoremove: true
+        update_cache: true
+        name: "*"
+        state: latest
+
+- ansible.builtin.import_playbook: "{{ playbook_dir }}/vault/main.yml"

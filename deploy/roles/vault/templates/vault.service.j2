@@ -1,0 +1,13 @@
+[Unit]
+Description=Hashicorp Vault
+Documentation=https://developer.hashicorp.com/vault/
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+Environment=HOME=/home/vault
+ExecStart=/home/vault/vault server -config=config.hcl
+
+[Install]
+WantedBy=default.target
