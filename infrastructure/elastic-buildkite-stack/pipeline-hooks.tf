@@ -61,7 +61,7 @@ resource "aws_s3_object" "agent_environment" {
 
     if [[ "$${VAULT_ROLE_ID:-}" != "" ]]; then
       VAULT_SECRET_ID="$(aws ssm get-parameter --with-decryption --name "/elastic-buildkite-stack/vault-secret-id/$VAULT_ROLE_ID" | jq --raw-output ".Parameter.Value")"
-      VAULT_ADDR="http://phoenix:8200"
+      VAULT_ADDR="https://vault.nicholas.cloud"
       export VAULT_ADDR
       VAULT_TOKEN="$(vault write -field=token auth/approle/login role_id="$VAULT_ROLE_ID" secret_id="$VAULT_SECRET_ID")"
       export VAULT_TOKEN
