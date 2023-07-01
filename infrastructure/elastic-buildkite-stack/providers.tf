@@ -2,17 +2,22 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 4.0"
+      version = "~> 4.59"
+    }
+
+    buildkite = {
+      source  = "buildkite/buildkite"
+      version = "~> 0.19"
     }
 
     pass = {
       source  = "nicholas.cloud/nchlswhttkr/pass"
-      version = ">= 0.1"
+      version = "~> 0.4"
     }
 
     tls = {
       source  = "hashicorp/tls"
-      version = ">= 4.0"
+      version = "~> 4.0"
     }
 
     vault = {
@@ -67,3 +72,13 @@ provider "pass" {
 }
 
 provider "vault" {}
+
+provider "buildkite" {
+  api_token    = data.vault_kv_secret_v2.buildkite.data.api_token
+  organization = "nchlswhttkr"
+}
+
+data "vault_kv_secret_v2" "buildkite" {
+  mount = "kv"
+  name  = "nchlswhttkr/buildkite"
+}

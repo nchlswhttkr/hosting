@@ -21,18 +21,17 @@ resource "aws_cloudformation_stack" "buildkite" {
 
     # Buildkite agent settings
     AgentsPerInstance         = 2
-    ScaleInIdlePeriod         = 300 # 5 minutes
+    ScaleInIdlePeriod         = 600 # 10 minutes
     BuildkiteAgentExperiments = "ansi-timestamps,resolve-commit-after-checkout"
   }
 }
 
-data "vault_kv_secret_v2" "buildkite" {
-  mount = "kv"
-  name  = "nchlswhttkr/buildkite"
+resource "buildkite_agent_token" "elastic" {
+  description = "Agent token for my autoscaling Buildkite agent"
 }
 
 resource "aws_ssm_parameter" "buildkite_agent_token" {
   name  = "/elastic-buildkite-stack/buildkite-agent-token"
   type  = "String"
-  value = data.vault_kv_secret_v2.buildkite.data.agent_token
+  value = buildkite_agent_token.elastic.token
 }
