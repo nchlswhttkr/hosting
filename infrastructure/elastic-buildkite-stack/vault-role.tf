@@ -20,6 +20,10 @@ resource "vault_policy" "buildkite" {
     path "aws/sts/Terraform" {
       capabilities = ["read"]
     }
+
+    path "sys/storage/raft/snapshot" {
+      capabilities = ["read"]
+    }
   POLICY
 }
 
