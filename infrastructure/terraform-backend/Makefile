@@ -14,3 +14,6 @@ upgrade:
 
 destroy: init
 	@terraform destroy
+
+shell: init
+	@${SHELL}
