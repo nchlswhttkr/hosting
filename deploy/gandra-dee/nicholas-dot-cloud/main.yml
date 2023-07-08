@@ -1,0 +1,58 @@
+- name: Deploy personal website
+  hosts: gandra-dee
+  gather_facts: false
+  pre_tasks:
+    - name: Create local user
+      become: true
+      register: create_user
+      ansible.builtin.user:
+        name: website
+        shell: /bin/bash
+
+    - name: Ensure website directory exists
+      register: ensure_website_directory
+      become: true
+      ansible.builtin.file:
+        path: /var/www/nicholas.cloud
+        state: directory
+        owner: website
+        group: website
+
+    - name: Sync public files
+      remote_user: website
+      ansible.posix.synchronize:
+        src: ~/Google Drive/nicholas.cloud/public-files/
+        dest: /var/www/nicholas.cloud/files/
+        delete: true
+
+    - name: Trigger build of website on Buildkite
+      when: ensure_website_directory.changed
+      ansible.builtin.uri:
+        url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds
+        method: POST
+        headers:
+          Authorization: Bearer {{ lookup('community.general.passwordstore', 'website/buildkite-api-token') }}
+        body_format: json
+        body:
+          commit: HEAD
+          branch: main
+        status_code: [201]
+
+    - name: Wait for website build in Buildkite to finish
+      when: ensure_website_directory.changed
+      register: buildkite_result
+      ansible.builtin.uri:
+        url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds?branch=main&per_page=1
+        headers:
+          Authorization: Bearer {{ lookup('community.general.passwordstore', 'website/buildkite-api-token') }}
+        body_format: json
+      until: buildkite_result.json[0].state in ["passed", "blocked", "failed"]
+      failed_when: buildkite_result.json[0].state != "passed"
+      retries: 60 # 60 * 10s ~= 10 minutes
+      delay: 10 # seconds
+
+  roles:
+    - role: ../../roles/nginx
+      become: true
+      vars:
+        nginx_hostname: "nicholas.cloud"

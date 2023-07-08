@@ -1,0 +1,29 @@
+---
+- name: Create a backup
+  hosts: gandra-dee
+  remote_user: plausible
+  gather_facts: false
+  tasks:
+    - name: Set backup date
+      ansible.builtin.set_fact:
+        backup_date: "{{ '%Y-%m-%dT%H:%M:%SZ' | strftime }}"
+    - name: Ensure backup path exists
+      ansible.builtin.file:
+        path: "/home/plausible/backups/{{ backup_date }}"
+        state: directory
+        recurse: true
+    - name: Stop Plausible
+      ansible.builtin.shell: systemctl --user stop plausible
+    - name: Create backup file of Plausible user data
+      ansible.builtin.shell: docker run --rm --mount "source=plausible-hosting_db-data,destination=/var/lib/postgresql/data,readonly" --mount "type=bind,source=/home/plausible/backups/{{ backup_date }},destination=/backup" ubuntu tar --gzip --create --file /backup/plausible-user-data.tar.gz --directory /var/lib/postgresql/data/ .
+    - name: Create backup file of Plausible event data
+      ansible.builtin.shell: docker run --rm --mount "source=plausible-hosting_event-data,destination=/var/lib/clickhouse,readonly" --mount "type=bind,source=/home/plausible/backups/{{ backup_date }},destination=/backup" ubuntu tar --gzip --create --file /backup/plausible-event-data.tar.gz --directory /var/lib/clickhouse/ .
+    - name: Restart Plausible
+      ansible.builtin.shell: systemctl --user start plausible
+    - name: Create tarball bundling all data
+      ansible.builtin.shell: tar --create --file "/home/plausible/backups/{{ backup_date }}.tar" --directory "/home/plausible/backups/{{ backup_date }}" .
+    - name: Copy backup file to controller
+      ansible.builtin.fetch:
+        src: "/home/plausible/backups/{{ backup_date }}.tar"
+        dest: "{{ playbook_dir }}/backups/"
+    # TODO: Clean up files after successful tarball is synced

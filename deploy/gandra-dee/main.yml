@@ -1,0 +1,32 @@
+- name: Deploy Gandra Dee
+  hosts: gandra-dee
+  gather_facts: false
+  pre_tasks:
+    - name: Install general tools and libraries
+      become: true
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - git
+          - jq
+        state: latest
+    - name: Keep system packages up to date
+      become: true
+      ansible.builtin.apt:
+        autoremove: true
+        update_cache: true
+        name: "*"
+        state: latest
+
+  roles:
+    - role: ../roles/docker
+      vars:
+        # https://download.docker.com/linux/ubuntu/dists
+        containerd_version: "1.6.9-1"
+        docker_version: "24.0.2-1~ubuntu.22.04~jammy"
+        docker_buildx_version: "0.10.5-1~ubuntu.22.04~jammy"
+        docker_compose_version: "2.6.0~ubuntu-jammy"
+
+- ansible.builtin.import_playbook: "{{ playbook_dir }}/plausible/main.yml"
+
+- ansible.builtin.import_playbook: "{{ playbook_dir }}/nicholas-dot-cloud/main.yml"

@@ -10,7 +10,7 @@ if "--list" not in sys.argv:
 
 # Query tailnet for all devices
 token = os.environ["TAILSCALE_API_TOKEN"]
-tailnet = "nchlswhttkr.github"
+tailnet = os.environ["TAILSCALE_TAILNET"]
 devices = requests.get(
     f"https://api.tailscale.com/api/v2/tailnet/{tailnet}/devices",
     headers={"Authorization": f"Bearer {token}"},
@@ -25,14 +25,7 @@ print(
                 ],
             },
             # https://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html#tuning-the-external-inventory-script
-            "_meta": {
-                "hostvars": {
-                    "gandra-dee": {
-                        # TODO: Change ansible_user to be nchlswhttkr (default)
-                        "ansible_user": "nicholas"
-                    }
-                }
-            },
+            "_meta": {},
         }
     )
 )

@@ -35,7 +35,18 @@ I self-host a number of personal projects and services, and predominantly manage
 - `boyd` - A Raspberry Pi 3 Model A+ sitting on my desk
   - A [Buildkite agent](https://buildkite.com/) dedicated to uploading pipeline files
   - A [Writefreely](https://writefreely.org/) instance available to my Tailnet at https://write.nicholas.cloud/
+- `gandra-dee` - A small DigitalOcean droplet
+  - My [personal website](https://github.com/nchlswhttkr/website/) at https://nicholas.cloud/
+  - A [Plausible Analytics instance](https://plausible.io/) at https://plausible.nicholas.cloud/
+- `gyro` - A Raspberry Pi 4 Model B also sitting on my desk
+  - A [Hashicorp Vault instance](https://www.hashicorp.com/products/vault) at https://vault.nicholas.cloud/
+
+Once again each project has its own `Makefile`, but there a little bit of general setup required for Ansible too.
 
 ```sh
+make -C deploy
+
 make -C deploy/boyd
+make -C deploy/gandra-dee
+make -C deploy/gyro
 ```

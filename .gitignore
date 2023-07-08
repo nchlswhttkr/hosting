@@ -1,2 +1,2 @@
 .terraform/
-playbooks/backups/
+deploy/gandra-dee/plausible/backups/
