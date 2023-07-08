@@ -7,6 +7,10 @@ resource "vault_auth_backend" "approle" {
   type = "approle"
 }
 
+resource "vault_auth_backend" "userpass" {
+  type = "userpass"
+}
+
 resource "vault_aws_secret_backend" "aws" {
   access_key                = aws_iam_access_key.vault.id
   secret_key                = aws_iam_access_key.vault.secret
