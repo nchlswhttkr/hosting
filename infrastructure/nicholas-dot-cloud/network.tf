@@ -1,10 +1,10 @@
 resource "digitalocean_vpc" "main" {
-  name   = "nicholas-dot-cloud"
+  name   = "nicholas-dot-cloud-${local.digitalocean_region}"
   region = local.digitalocean_region
 }
 
 resource "digitalocean_firewall" "web" {
-  name = "web-server-with-tailscale"
+  name = "nicholas-dot-cloud"
   tags = [local.digitalocean_web_server_tag]
 
   # Allow inbound SSH connections from within the project's VPC

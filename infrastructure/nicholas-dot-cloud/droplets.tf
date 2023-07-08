@@ -5,7 +5,7 @@ resource "digitalocean_ssh_key" "remote_user" {
 }
 
 locals {
-  digitalocean_region         = "sgp1"
+  digitalocean_region         = "syd1"
   digitalocean_web_server_tag = "nicholas-dot-cloud-web-servers"
 }
 
@@ -30,29 +30,36 @@ resource "digitalocean_droplet" "web" {
   vpc_uuid   = digitalocean_vpc.main.id
   tags       = [local.digitalocean_web_server_tag]
 
-  provisioner "local-exec" {
-    command = "./set-up-tailscale-on-droplet.sh '${self.id}'"
-  }
+  user_data = <<-EOF
+#cloud-config
+---
+apt:
+  sources:
+    tailscale.list:
+      source: "deb https://pkgs.tailscale.com/stable/ubuntu jammy main"
+      key: ${jsonencode(data.http.tailscale_signing_key.response_body)}
+packages:
+  - "tailscale"
+snap:
+  commands:
+    - snap install core
+    - snap refresh core
+    - snap install --classic certbot
+users:
+  - name: nchlswhttkr
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+runcmd:
+  - ["tailscale", "up", "--ssh", "--auth-key", "${tailscale_tailnet_key.web.key}"]
+  - ["ln", "-s", "/snap/bin/certbot", "/usr/bin/certbot"]
+EOF
 }
 
-resource "digitalocean_volume" "backups" {
-  region                  = local.digitalocean_region
-  name                    = "backups"
-  size                    = 1
-  initial_filesystem_type = "ext4"
-
-  lifecycle {
-    prevent_destroy = true
-  }
+data "http" "tailscale_signing_key" {
+  url = "https://pkgs.tailscale.com/stable/ubuntu/jammy.gpg"
 }
 
-resource "digitalocean_volume_attachment" "backups" {
-  droplet_id = digitalocean_droplet.web.id
-  volume_id  = digitalocean_volume.backups.id
-
-  provisioner "local-exec" {
-    command = "./mount-digitalocean-volume-to-droplet.sh '${digitalocean_volume.backups.name}' '${digitalocean_droplet.web.name}'"
-  }
-
-  # TODO: Create a destroy-time provisioner to shut down the droplet to prevent corruption
+# TODO: This may be recreated by Terraform once it's cleared from Tailscale
+resource "tailscale_tailnet_key" "web" {
+  expiry = 3600 # 1 hour
 }
