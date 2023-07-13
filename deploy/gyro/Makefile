@@ -3,7 +3,7 @@
 venv := . ../../.venv/bin/activate
 
 export ANSIBLE_CONFIG="$(shell pwd)/../ansible.cfg"
-export TAILSCALE_API_TOKEN?=$(shell pass show tailscale/api-token)
+export VAULT_TOKEN?=$(shell pass show vault/root-token)
 
 # https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#running-on-macos
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES

@@ -15,6 +15,7 @@ steps:
             # TODO: Fix the need to load Vault just to list Tailscale inventory
             - VAULT_ADDR
             - VAULT_TOKEN
+            - BUILDKITE_PIPELINE_SLUG
 
   - wait
 
