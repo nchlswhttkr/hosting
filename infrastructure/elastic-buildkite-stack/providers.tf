@@ -80,5 +80,5 @@ provider "buildkite" {
 
 data "vault_kv_secret_v2" "buildkite" {
   mount = "kv"
-  name  = "nchlswhttkr/buildkite"
+  name  = "hosting/buildkite"
 }

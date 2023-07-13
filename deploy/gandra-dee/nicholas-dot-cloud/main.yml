@@ -31,7 +31,7 @@
         url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds
         method: POST
         headers:
-          Authorization: Bearer {{ lookup('community.general.passwordstore', 'website/buildkite-api-token') }}
+          Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/hosting/buildkite').data.data.api_token }}
         body_format: json
         body:
           commit: HEAD
@@ -44,7 +44,7 @@
       ansible.builtin.uri:
         url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds?branch=main&per_page=1
         headers:
-          Authorization: Bearer {{ lookup('community.general.passwordstore', 'website/buildkite-api-token') }}
+          Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/hosting/buildkite').data.data.api_token }}
         body_format: json
       until: buildkite_result.json[0].state in ["passed", "blocked", "failed"]
       failed_when: buildkite_result.json[0].state != "passed"
