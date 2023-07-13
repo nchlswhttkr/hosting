@@ -4,7 +4,7 @@ set -euo pipefail
 
 echo "--- Preparing runtime environment"
 python3 -m venv .venv
-make -C playbooks install
+make -C deploy
 
 echo "--- Backing up Plausible instance"
-make -C playbooks backup-plausible
+make -C deploy/gandra-dee backup-plausible
