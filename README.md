@@ -6,21 +6,23 @@ Infrastructure, playbooks and configuration for self-hosted services I run.
 
 I automate some maintenance tasks with Buildkite.
 
-|                                                                                                                                                                               |                            |                                                  |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ------------------------------------------------ |
-| [![Build status](https://badge.buildkite.com/75b7bae85ee38f73966c32cef60f1251d3a186ef4d63ff7dc0.svg?branch=main)](https://buildkite.com/nchlswhttkr/hosting-plausible-backup) | `hosting-plausible-backup` | Runs a scheduled backup of my Plausible instance |
+|                                                                                                                                                                               |                            |                                          |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------- |
+| [![Build status](https://badge.buildkite.com/97343e68892aa5fbb7fd00885adb0a28fdd9468cbb28763ef3.svg?branch=main)](https://buildkite.com/nchlswhttkr/hosting-backup-plausible) | `hosting-backup-plausible` | Backs up my Plausible Analytics instance |
+| [![Build status](https://badge.buildkite.com/c4820c1695baf489be6ca1eb3104096ac289c88602b1d91ac3.svg?branch=main)](https://buildkite.com/nchlswhttkr/hosting-backup-vault)     | `hosting-backup-vault`     | Backs up my Hashicorp Vault instance     |
 
 ## Infrastructure
 
 I have a number of Terraform projects that don't belong to any particular project repositories, so I keep them here.
 
-|                              |                                                                             |
-| ---------------------------- | --------------------------------------------------------------------------- |
-| `terraform-backend`          | An AWS backend for all my other Terraform projects to use                   |
-| `vault`                      | My self-hosted Vault instance for credential management in my projects      |
-| `elastic-ci-stack`           | Autoscaling Buildkite agents, plus secrets needed by my Buildkite pipelines |
-| `nicholas-dot-cloud`         | Infrastructure related to my personal website                               |
-| `nicholas-dot-cloud-preview` | Generating previews of pull request changes to my personal website          |
+|                              |                                                                              |
+| ---------------------------- | ---------------------------------------------------------------------------- |
+| `backups`                    | Automating backups of my self-hosted services                                |
+| `elastic-ci-stack`           | Autoscaling Buildkite agents, plus secrets needed by my Buildkite pipelines  |
+| `nicholas-dot-cloud`         | Infrastructure related to my personal website                                |
+| `nicholas-dot-cloud-preview` | Generating previews of pull request changes to my personal website           |
+| `terraform-backend`          | An AWS backend for all my other Terraform projects to use                    |
+| `vault`                      | Backend and policy configuration for my self-hosted Hashicorp Vault instance |
 
 Each project is deployed by its own `Makefile`.
 
