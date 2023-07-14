@@ -2,7 +2,7 @@
 
 venv := . ../../.venv/bin/activate
 
-export ANSIBLE_CONFIG="$(shell pwd)/../ansible.cfg"
+export ANSIBLE_CONFIG=../ansible.cfg
 export VAULT_TOKEN?=$(shell pass show vault/root-token)
 
 # https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#running-on-macos
