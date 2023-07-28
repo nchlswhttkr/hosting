@@ -10,3 +10,6 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 main:
 	@$(venv) && ansible-playbook --inventory ../inventory.py main.yml
+
+backup-write:
+	@$(venv) && ansible-playbook --inventory ../inventory.py writefreely/backup.yml
