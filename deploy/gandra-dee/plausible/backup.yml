@@ -26,4 +26,3 @@
       ansible.builtin.fetch:
         src: "/home/plausible/backups/{{ backup_date }}.tar"
         dest: "{{ playbook_dir }}/backups/"
-    # TODO: Clean up files after successful tarball is synced

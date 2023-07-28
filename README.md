@@ -10,6 +10,7 @@ I automate some maintenance tasks with Buildkite.
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------- |
 | [![Build status](https://badge.buildkite.com/97343e68892aa5fbb7fd00885adb0a28fdd9468cbb28763ef3.svg?branch=main)](https://buildkite.com/nchlswhttkr/hosting-backup-plausible) | `hosting-backup-plausible` | Backs up my Plausible Analytics instance |
 | [![Build status](https://badge.buildkite.com/c4820c1695baf489be6ca1eb3104096ac289c88602b1d91ac3.svg?branch=main)](https://buildkite.com/nchlswhttkr/hosting-backup-vault)     | `hosting-backup-vault`     | Backs up my Hashicorp Vault instance     |
+| [![Build status](https://badge.buildkite.com/8147d53ba87d1daeb8053ba266ab93c69984c51f9678fc0d56.svg?branch=main)](https://buildkite.com/nchlswhttkr/hosting-backup-write)     | `hosting-backup-write`     | Backs up my Writefreely instance         |
 
 ## Infrastructure
 
