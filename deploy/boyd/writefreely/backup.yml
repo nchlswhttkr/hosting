@@ -13,11 +13,11 @@
         state: directory
         recurse: true
     - name: Stop Writefreely
-      ansible.builtin.shell: systemctl --user stop writefreely
+      ansible.builtin.shell: systemctl --user stop write
     - name: Create backup file of Writefreely data and credentials
       ansible.builtin.shell: "tar --gzip --create --file /home/write/backups/{{ backup_date }}.tar --directory /home/write/writefreely keys writefreely.db"
     - name: Restart Writefreely
-      ansible.builtin.shell: systemctl --user start writefreely
+      ansible.builtin.shell: systemctl --user start write
     - name: Copy backup file to controller
       ansible.builtin.fetch:
         src: "/home/write/backups/{{ backup_date }}.tar"
