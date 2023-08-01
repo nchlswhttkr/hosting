@@ -18,7 +18,8 @@
 - name: Copy Buildkite agent token
   register: copy_buildkite_agent_token
   vars:
-    buildkite_agent_token: "{{ lookup('community.general.passwordstore', 'website/buildkite-agent-token') }}"
+    # TODO: Consider retrieving this from Vault
+    buildkite_agent_token: "{{ lookup('community.general.passwordstore', 'buildkite/agent-token') }}"
   ansible.builtin.copy:
     content: |
       BUILDKITE_AGENT_TOKEN="{{ buildkite_agent_token }}"
