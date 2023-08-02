@@ -11,7 +11,7 @@ Type=simple
 Environment=HOME=/home/buildkite
 Environment=BUILDKITE_AGENT_CONFIG=/home/buildkite/buildkite-agent.cfg
 EnvironmentFile=/home/buildkite/.env
-ExecStart=/home/buildkite/.buildkite-agent/buildkite-agent start
+ExecStart=/home/buildkite/buildkite-agent/buildkite-agent start
 RestartSec=5
 Restart=on-failure
 RestartForceExitStatus=SIGPIPE

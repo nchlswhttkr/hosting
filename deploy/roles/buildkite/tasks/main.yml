@@ -3,14 +3,14 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - /home/buildkite/.buildkite-agent/
+    - /home/buildkite/buildkite-agent/
     - /home/buildkite/.config/systemd/user/
     - /home/buildkite/.ssh/
 
 - name: Download and install Buildkite agent
   register: install_buildkite_agent
   ansible.builtin.unarchive:
-    dest: /home/buildkite/.buildkite-agent
+    dest: /home/buildkite/buildkite-agent
     remote_src: true
     # TODO: Get architecture dynamically instead of hardcoding it
     src: https://github.com/buildkite/agent/releases/download/v{{ buildkite_agent_version }}/buildkite-agent-linux-arm64-{{ buildkite_agent_version }}.tar.gz
@@ -75,7 +75,7 @@
   ansible.builtin.get_url:
     # TODO: Get architecture dynamically instead of hardcoding it
     url: https://github.com/buildkite/buildkite-agent-metrics/releases/download/v{{ buildkite_agent_metrics_version }}/buildkite-agent-metrics-linux-arm64
-    dest: /home/buildkite/.buildkite-agent/buildkite-agent-metrics
+    dest: /home/buildkite/buildkite-agent/buildkite-agent-metrics
     mode: "0700"
 
 - name: Configure Buildkite Agent Metrics systemd unit
