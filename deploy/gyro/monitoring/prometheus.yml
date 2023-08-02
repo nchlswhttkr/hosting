@@ -1,11 +1,10 @@
-global:
-  scrape_interval: 15s
-
 scrape_configs:
   - job_name: "prometheus"
-    scrape_interval: 5s
     static_configs:
       - targets: ["localhost:9090"]
   - job_name: "node"
     static_configs:
       - targets: ["boyd:9100", "gandra-dee:9100", "gyro:9100"]
+  - job_name: "nginx"
+    static_configs:
+      - targets: ["boyd:9113", "gandra-dee:9113", "gyro:9113"]

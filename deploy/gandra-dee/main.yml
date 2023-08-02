@@ -24,6 +24,11 @@
       vars:
         node_exporter_version: "1.6.1"
         goarch: amd64
+    - role: ../../roles/nginx-prometheus-exporter
+      become: true
+      vars:
+        nginx_prometheus_exporter_version: "0.11.0"
+        goarch: amd64
     - role: ../roles/docker
       vars:
         # https://download.docker.com/linux/ubuntu/dists

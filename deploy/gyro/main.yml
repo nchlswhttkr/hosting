@@ -33,6 +33,11 @@
       vars:
         node_exporter_version: "1.6.1"
         goarch: arm64
+    - role: ../../roles/nginx-prometheus-exporter
+      become: true
+      vars:
+        nginx_prometheus_exporter_version: "0.11.0"
+        goarch: arm64
 
 - ansible.builtin.import_playbook: "{{ playbook_dir }}/vault/main.yml"
 
