@@ -1,0 +1,12 @@
+[Unit]
+Description=Node Exporter
+Documentation=https://prometheus.io/docs/guides/node-exporter/
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/root/node_exporter/node_exporter
+
+[Install]
+WantedBy=default.target

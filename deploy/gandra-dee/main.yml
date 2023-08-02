@@ -19,6 +19,11 @@
         state: latest
 
   roles:
+    - role: ../../roles/node-exporter
+      become: true
+      vars:
+        node_exporter_version: "1.6.1"
+        goarch: amd64
     - role: ../roles/docker
       vars:
         # https://download.docker.com/linux/ubuntu/dists
