@@ -29,3 +29,5 @@
         state: latest
 
 - ansible.builtin.import_playbook: "{{ playbook_dir }}/vault/main.yml"
+
+- ansible.builtin.import_playbook: "{{ playbook_dir }}/monitoring/main.yml"

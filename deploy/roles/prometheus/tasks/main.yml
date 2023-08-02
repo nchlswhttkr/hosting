@@ -1,0 +1,38 @@
+- name: Ensure required directory exists
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /home/monitoring/.config/systemd/user/
+    - /home/monitoring/prometheus
+
+- name: Download and install Prometheus
+  register: install_prometheus
+  ansible.builtin.unarchive:
+    dest: /home/monitoring/prometheus
+    remote_src: true
+    # TODO: Get architecture dynamically instead of hardcoding it
+    src: https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-arm64.tar.gz
+    extra_opts:
+      - --strip-components=1
+      - --exclude=prometheus.yml
+
+- name: Configure Prometheus instance
+  register: configure_prometheus
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: "{{ playbook_dir }}/prometheus.yml"
+      dest: /home/monitoring/prometheus/prometheus.yml
+    - src: prometheus.service.j2
+      dest: /home/monitoring/.config/systemd/user/prometheus.service
+
+- name: Restart Prometheus service
+  when: install_prometheus.changed or configure_prometheus.changed
+  ansible.builtin.systemd:
+    name: prometheus
+    scope: user
+    state: restarted
+    enabled: true
+    daemon_reload: true

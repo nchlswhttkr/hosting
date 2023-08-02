@@ -1,0 +1,23 @@
+- name: Deploy Prometheus instance
+  hosts: gyro
+  gather_facts: false
+  pre_tasks:
+    - name: Create Monitoring user
+      become: true
+      register: create_user
+      ansible.builtin.user:
+        name: monitoring
+        shell: /bin/bash
+    - name: Enable linger for Monitoring user
+      become: true
+      when: create_user.changed
+      ansible.builtin.shell: loginctl enable-linger monitoring
+  roles:
+    - role: ../../roles/prometheus
+      remote_user: monitoring
+      vars:
+        prometheus_version: "2.46.0"
+    - role: ../../roles/nginx
+      become: true
+      vars:
+        nginx_hostname: "prometheus.nicholas.cloud"
