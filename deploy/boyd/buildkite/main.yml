@@ -17,3 +17,4 @@
       remote_user: buildkite
       vars:
         buildkite_agent_version: "3.48.0"
+        buildkite_agent_metrics_version: "5.7.0"

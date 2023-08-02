@@ -8,3 +8,7 @@ scrape_configs:
   - job_name: "nginx"
     static_configs:
       - targets: ["boyd:9113", "gandra-dee:9113", "gyro:9113"]
+  - job_name: "buildkite"
+    scrape_interval: 30s
+    static_configs:
+      - targets: ["boyd:9120"]

@@ -13,7 +13,7 @@
     dest: /home/buildkite/.buildkite-agent
     remote_src: true
     # TODO: Get architecture dynamically instead of hardcoding it
-    src: "https://github.com/buildkite/agent/releases/download/v{{buildkite_agent_version}}/buildkite-agent-linux-arm64-{{ buildkite_agent_version}}.tar.gz"
+    src: https://github.com/buildkite/agent/releases/download/v{{ buildkite_agent_version }}/buildkite-agent-linux-arm64-{{ buildkite_agent_version }}.tar.gz
 
 - name: Copy Buildkite agent token
   register: copy_buildkite_agent_token
@@ -65,6 +65,29 @@
   when: install_buildkite_agent.changed or copy_buildkite_agent_token.changed or configure_buildkite_agent.changed
   ansible.builtin.systemd:
     name: buildkite-agent
+    scope: user
+    state: restarted
+    enabled: true
+    daemon_reload: true
+
+- name: Download Buildkite Agent Metrics tool
+  register: install_metrics
+  ansible.builtin.get_url:
+    # TODO: Get architecture dynamically instead of hardcoding it
+    url: https://github.com/buildkite/buildkite-agent-metrics/releases/download/v{{ buildkite_agent_metrics_version }}/buildkite-agent-metrics-linux-arm64
+    dest: /home/buildkite/.buildkite-agent/buildkite-agent-metrics
+    mode: "0700"
+
+- name: Configure Buildkite Agent Metrics systemd unit
+  register: configure_metrics_systemd_unit
+  ansible.builtin.template:
+    src: buildkite-agent-metrics.service.j2
+    dest: /home/buildkite/.config/systemd/user/buildkite-agent-metrics.service
+
+- name: Restart Buildkite Agent Metrics service
+  when: install_metrics.changed or copy_buildkite_agent_token.changed or configure_metrics_systemd_unit.changed
+  ansible.builtin.systemd:
+    name: buildkite-agent-metrics
     scope: user
     state: restarted
     enabled: true
