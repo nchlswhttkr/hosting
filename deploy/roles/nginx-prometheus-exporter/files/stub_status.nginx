@@ -1,5 +1,5 @@
 server {
-    listen 8080;
+    listen 8080; # The default/expected port the exporter will scrape from
     
     location /stub_status {
         stub_status;

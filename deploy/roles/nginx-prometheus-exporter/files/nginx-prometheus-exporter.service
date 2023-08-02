@@ -6,7 +6,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/root/nginx-prometheus-exporter/nginx-prometheus-exporter
+ExecStart=/root/nginx-prometheus-exporter/nginx-prometheus-exporter -web.listen-address :9110
 
 [Install]
 WantedBy=default.target
