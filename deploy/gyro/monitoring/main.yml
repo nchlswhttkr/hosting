@@ -1,4 +1,4 @@
-- name: Deploy Prometheus instance
+- name: Deploy Prometheus and Grafana instances
   hosts: gyro
   gather_facts: false
   pre_tasks:
@@ -29,3 +29,11 @@
       become: true
       vars:
         nginx_hostname: "prometheus.nicholas.cloud"
+    - role: ../../roles/grafana
+      remote_user: monitoring
+      vars:
+        grafana_version: "10.0.3"
+    - role: ../../roles/nginx
+      become: true
+      vars:
+        nginx_hostname: "grafana.nicholas.cloud"

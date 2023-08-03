@@ -1,0 +1,13 @@
+[Unit]
+Description=Grafana
+Documentation=https://grafana.com/docs/grafana/latest/
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/monitoring/grafana
+ExecStart=/home/monitoring/grafana/bin/grafana server --config conf/grafana.ini
+
+[Install]
+WantedBy=default.target

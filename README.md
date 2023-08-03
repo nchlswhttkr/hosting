@@ -43,6 +43,8 @@ I self-host a number of personal projects and services, and predominantly manage
   - A [Plausible Analytics instance](https://plausible.io/) at https://plausible.nicholas.cloud/
 - `gyro` - A Raspberry Pi 4 Model B also sitting on my desk
   - A [Hashicorp Vault instance](https://www.hashicorp.com/products/vault) at https://vault.nicholas.cloud/
+  - A [Prometheus instance](https://prometheus.io) at https://prometheus.nicholas.cloud/
+  - A [Grafana instance](https://grafana.com) at https://grafana.nicholas.cloud/
 
 Once again each project has its own `Makefile`, but there a little bit of general setup required for Ansible too.
 
