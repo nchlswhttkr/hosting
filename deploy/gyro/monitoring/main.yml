@@ -12,6 +12,14 @@
       become: true
       when: create_user.changed
       ansible.builtin.shell: loginctl enable-linger monitoring
+    - name: Copy Vault token to scrape Prometheus metrics
+      remote_user: monitoring
+      ansible.builtin.copy:
+        # TODO: Look at retrieving this token dynamically from Vault, rather than relying on a copy command
+        content: |
+          {{ lookup('community.hashi_vault.vault_read', 'kv/data/hosting/vault-prometheus-metrics').data.data.vault_token }}
+        dest: /home/monitoring/.prometheus-metrics-vault-token
+        mode: "0600"
   roles:
     - role: ../../roles/prometheus
       remote_user: monitoring

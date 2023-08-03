@@ -17,7 +17,7 @@
   ansible.builtin.stat:
     path: /etc/letsencrypt/live/{{ nginx_hostname }}/privkey.pem
 
-- name: Pause until TLS certificates are created
+- name: Pause for TLS certificates to be created
   when: not check_tls_certificates.stat.exists
   ansible.builtin.pause:
 

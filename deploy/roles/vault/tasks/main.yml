@@ -41,3 +41,7 @@
     state: restarted
     enabled: true
     daemon_reload: true
+
+- name: Pause for Vault to be unsealed
+  when: install_vault.changed or configure_vault.changed
+  ansible.builtin.pause:
