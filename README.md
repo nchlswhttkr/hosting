@@ -55,3 +55,18 @@ make -C deploy/boyd
 make -C deploy/gandra-dee
 make -C deploy/gyro
 ```
+
+### Setting up new hosts
+
+There's a couple of assumed tools and setup needed before a new host is good to go with Ansible.
+
+- Install [Tailscale](https://tailscale.com/kb/1031/install-linux/) and add to your Tailnet
+- Install [Certbot](https://certbot.eff.org/instructions)
+  - Installing Certbot will require [Snap](https://snapcraft.io/docs/installing-snap-on-raspbian)
+  - For now, use [the Cloudflare plugin](https://certbot-dns-cloudflare.readthedocs.io/en/stable/) and install the necessary credentials in `~/cloudflare.ini`
+
+Automatic renewal can be set up for a domain with the following command.
+
+```sh
+sudo certbot certonly --dns-cloudflare --dns-cloudflare-credentials ~/cloudflare.ini --domain <domain>
+```
