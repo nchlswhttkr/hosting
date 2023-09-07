@@ -1,9 +1,3 @@
-resource "aws_ssm_parameter" "vault_secret_id" {
-  name  = "/elastic-buildkite-stack/vault-secret-id/${vault_approle_auth_backend_role.buildkite.role_id}"
-  type  = "SecureString"
-  value = vault_approle_auth_backend_role_secret_id.buildkite.secret_id
-}
-
 resource "vault_policy" "buildkite" {
   name = "buildkite"
   # https://registry.terraform.io/providers/hashicorp/vault/latest/docs#token
@@ -13,7 +7,7 @@ resource "vault_policy" "buildkite" {
       capabilities = ["update"]
     }
 
-    path "kv/data/buildkite/*" {
+    path "kv/data/buildkite/{identity.entity.metadata.organization_slug}/*" {
       capabilities = ["read"]
     }
     
@@ -27,12 +21,25 @@ resource "vault_policy" "buildkite" {
   POLICY
 }
 
-resource "vault_approle_auth_backend_role" "buildkite" {
-  backend        = "approle"
-  role_name      = "buildkite"
-  token_policies = ["default", vault_policy.buildkite.name]
+resource "vault_jwt_auth_backend" "buildkite" {
+  path               = "buildkite"
+  oidc_discovery_url = "https://agent.buildkite.com"
 }
 
-resource "vault_approle_auth_backend_role_secret_id" "buildkite" {
-  role_name = vault_approle_auth_backend_role.buildkite.role_name
+resource "vault_jwt_auth_backend_role" "buildkite" {
+  backend        = vault_jwt_auth_backend.buildkite.path
+  role_name      = "buildkite"
+  token_policies = ["default", vault_policy.buildkite.name]
+  role_type      = "jwt"
+
+  # TODO: What is this?
+  user_claim = "https://vault/user"
+
+  bound_claims = {
+    organization_slug = local.buildkite_organization
+  }
+
+  claim_mappings = {
+    organization_slug = "organization_slug"
+  }
 }

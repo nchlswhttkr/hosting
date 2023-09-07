@@ -75,7 +75,7 @@ provider "vault" {}
 
 provider "buildkite" {
   api_token    = data.vault_kv_secret_v2.buildkite.data.api_token
-  organization = "nchlswhttkr"
+  organization = local.buildkite_organization
 }
 
 data "vault_kv_secret_v2" "buildkite" {

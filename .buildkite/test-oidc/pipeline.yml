@@ -1,0 +1,3 @@
+steps:
+  - label: ":partyparrot: Authenticate"
+    command: .buildkite/test-oidc/test.sh

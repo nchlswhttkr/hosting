@@ -58,18 +58,6 @@ data "aws_iam_policy_document" "buildkite_agent" {
   }
 
   statement {
-    sid = "ReadVaultAuthenticationCredentials"
-
-    actions = [
-      "ssm:GetParameter"
-    ]
-
-    resources = [
-      aws_ssm_parameter.vault_secret_id.arn
-    ]
-  }
-
-  statement {
     sid = "DecryptSecretParameters"
 
     actions = [
