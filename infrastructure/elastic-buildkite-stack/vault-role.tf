@@ -10,6 +10,10 @@ resource "vault_policy" "buildkite" {
     path "kv/data/buildkite/{identity.entity.metadata.organization_slug}/*" {
       capabilities = ["read"]
     }
+
+    path "kv/data/buildkite/{identity.entity.metadata.organization_slug}" {
+      capabilities = ["read"]
+    }
     
     path "aws/sts/Terraform" {
       capabilities = ["read"]
@@ -33,7 +37,7 @@ resource "vault_jwt_auth_backend_role" "buildkite" {
   role_type      = "jwt"
 
   # TODO: What is this?
-  user_claim = "https://vault/user"
+  user_claim = "sub"
 
   bound_claims = {
     organization_slug = local.buildkite_organization
