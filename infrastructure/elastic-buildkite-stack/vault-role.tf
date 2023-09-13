@@ -7,11 +7,11 @@ resource "vault_policy" "buildkite" {
       capabilities = ["update"]
     }
 
-    path "kv/data/buildkite/{identity.entity.metadata.pipeline_slug}/*" {
+    path "kv/data/buildkite/{{identity.entity.metadata.pipeline_slug}}/*" {
       capabilities = ["read"]
     }
 
-    path "kv/data/buildkite/{identity.entity.metadata.pipeline_slug}" {
+    path "kv/data/buildkite/{{identity.entity.metadata.pipeline_slug}}" {
       capabilities = ["read"]
     }
     
