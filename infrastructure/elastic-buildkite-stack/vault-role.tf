@@ -7,11 +7,11 @@ resource "vault_policy" "buildkite" {
       capabilities = ["update"]
     }
 
-    path "kv/data/buildkite/{identity.entity.metadata.organization_slug}/*" {
+    path "kv/data/buildkite/{identity.entity.metadata.pipeline_slug}/*" {
       capabilities = ["read"]
     }
 
-    path "kv/data/buildkite/{identity.entity.metadata.organization_slug}" {
+    path "kv/data/buildkite/{identity.entity.metadata.pipeline_slug}" {
       capabilities = ["read"]
     }
     
@@ -44,6 +44,6 @@ resource "vault_jwt_auth_backend_role" "buildkite" {
   }
 
   claim_mappings = {
-    organization_slug = "organization_slug"
+    pipeline_slug = "pipeline_slug"
   }
 }
