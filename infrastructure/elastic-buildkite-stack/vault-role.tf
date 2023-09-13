@@ -6,7 +6,7 @@ resource "vault_policy" "buildkite" {
     path "auth/token/create" {
       capabilities = ["update"]
     }
-    
+
     path "kv/data/buildkite/{{identity.entity.aliases.${vault_jwt_auth_backend.buildkite.accessor}.metadata.pipeline_slug}}" {
       capabilities = ["read"]
     }
