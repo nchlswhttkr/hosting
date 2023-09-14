@@ -23,14 +23,22 @@ resource "aws_s3_object" "bootstrap_script" {
 }
 
 resource "aws_ssm_parameter" "tailscale_authentication_key" {
-  name  = "/elastic-buildkite-stack/tailscale-authentication-token"
+  name  = "/elastic-buildkite-stack/tailscale-authentication-key"
   type  = "SecureString"
-  value = data.vault_kv_secret_v2.tailscale.data.authentication_token
+  value = tailscale_tailnet_key.buildkite.key
 }
 
-data "vault_kv_secret_v2" "tailscale" {
-  mount = "kv"
-  name  = "nchlswhttkr/tailscale"
+resource "tailscale_tailnet_key" "buildkite" {
+  ephemeral = true
+  reusable  = true
+  tags      = ["tag:buildkite"]
+
+  # Since time_rotating marks itself as deleted, can't use replace_triggered_by https://github.com/hashicorp/terraform-provider-time/issues/118
+  description = "Autoscaling Buildkite agents created ${time_rotating.tailscale_rotation.year} ${time_rotating.tailscale_rotation.month} ${time_rotating.tailscale_rotation.day}"
+}
+
+resource "time_rotating" "tailscale_rotation" {
+  rotation_days = 14
 }
 
 data "aws_kms_key" "ssm_default" {
