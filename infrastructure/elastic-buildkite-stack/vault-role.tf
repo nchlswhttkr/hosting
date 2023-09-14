@@ -24,6 +24,12 @@ resource "vault_policy" "buildkite" {
 resource "vault_jwt_auth_backend" "buildkite" {
   path               = "buildkite"
   oidc_discovery_url = "https://agent.buildkite.com"
+
+  tune {
+    default_lease_ttl = "1h"
+    max_lease_ttl     = "24h"
+    token_type        = "service"
+  }
 }
 
 resource "vault_jwt_auth_backend_role" "buildkite" {
@@ -31,9 +37,7 @@ resource "vault_jwt_auth_backend_role" "buildkite" {
   role_name      = "buildkite"
   token_policies = ["default", vault_policy.buildkite.name]
   role_type      = "jwt"
-
-  # TODO: What is this?
-  user_claim = "sub"
+  user_claim     = "sub"
 
   bound_claims = {
     organization_slug = local.buildkite_organization
