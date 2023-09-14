@@ -1,0 +1,3 @@
+steps:
+  - command: .buildkite/test-oidc/test.sh
+    label: Test
