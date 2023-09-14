@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-TOKEN="$(buildkite-agent oidc request-token --audience sts.amazonaws.com)"
+# TOKEN="$(buildkite-agent oidc request-token --audience sts.amazonaws.com)"
+TOKEN="$(buildkite-agent oidc request-token)"
 
 aws sts get-caller-identity --output json | tee identity
 
