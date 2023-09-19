@@ -11,3 +11,6 @@ data "vault_kv_secret_v2" "buildkite" {
   name  = "hosting/buildkite"
 }
 
+data "aws_ssm_parameter" "buildkite_oidc_provider_arn" {
+  name = "/elastic-buildkite-stack/buildkite-oidc-provider-arn"
+}

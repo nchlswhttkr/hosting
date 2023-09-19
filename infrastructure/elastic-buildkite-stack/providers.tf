@@ -15,6 +15,16 @@ terraform {
       version = "~> 0.4"
     }
 
+    tailscale = {
+      source  = "tailscale/tailscale"
+      version = "~> 0.13"
+    }
+
+    time = {
+      source  = "hashicorp/time"
+      version = "~> 0.9"
+    }
+
     tls = {
       source  = "hashicorp/tls"
       version = "~> 4.0"
@@ -75,10 +85,14 @@ provider "vault" {}
 
 provider "buildkite" {
   api_token    = data.vault_kv_secret_v2.buildkite.data.api_token
-  organization = "nchlswhttkr"
+  organization = local.buildkite_organization
 }
 
 data "vault_kv_secret_v2" "buildkite" {
   mount = "kv"
   name  = "hosting/buildkite"
+}
+
+provider "tailscale" {
+  tailnet = "nchlswhttkr.github"
 }
