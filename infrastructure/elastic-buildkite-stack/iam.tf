@@ -63,7 +63,7 @@ data "aws_iam_policy_document" "buildkite_agent" {
       "sts:AssumeRoleWithWebIdentity"
     ]
     resources = [
-      "*" # For now, we can't know the potential roles an agent could assume, it would be nice to attach policies to the main role but that role managed by the CloudFormation stack
+      "*" # For now we don't know the potential roles an agent might assume, it would be nice to attach policies CloudFormation stack's EC2 role but I don't want to touch "internals"
     ]
   }
 }
