@@ -35,3 +35,22 @@ resource "aws_ssm_parameter" "buildkite_agent_token" {
   type  = "String"
   value = buildkite_agent_token.elastic.token
 }
+
+resource "aws_s3_object" "agent_environment" {
+  bucket                 = aws_cloudformation_stack.buildkite.outputs.ManagedSecretsBucket
+  key                    = "environment"
+  server_side_encryption = "aws:kms"
+  content                = <<-EOF
+    #!/bin/bash
+    set -euo pipefail
+
+    export BUILDKITE_GIT_FETCH_FLAGS="-v --prune --tags"
+    export VAULT_ADDR="https://vault.nicholas.cloud"
+
+    BUILDKITE_OIDC_JWT="$(buildkite-agent oidc request-token)"
+    VAULT_TOKEN="$(vault write -format=json auth/buildkite/login role=buildkite jwt="$BUILDKITE_OIDC_JWT" | jq --raw-output ".auth.client_token")"
+    unset BUILDKITE_OIDC_JWT
+    export VAULT_TOKEN
+  EOF
+}
+
