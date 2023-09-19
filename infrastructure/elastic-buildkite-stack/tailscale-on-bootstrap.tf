@@ -34,13 +34,10 @@ resource "tailscale_tailnet_key" "buildkite" {
   tags      = ["tag:buildkite"]
 
   # Since time_rotating marks itself as deleted, can't use replace_triggered_by https://github.com/hashicorp/terraform-provider-time/issues/118
+  # Instead, include it in the description here to force recreation when rotation occurs
   description = "Autoscaling Buildkite agents created ${time_rotating.tailscale_rotation.year} ${time_rotating.tailscale_rotation.month} ${time_rotating.tailscale_rotation.day}"
 }
 
 resource "time_rotating" "tailscale_rotation" {
   rotation_days = 14
-}
-
-data "aws_kms_key" "ssm_default" {
-  key_id = "alias/aws/ssm"
 }
