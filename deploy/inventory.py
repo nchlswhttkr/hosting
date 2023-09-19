@@ -8,16 +8,9 @@ if "--list" not in sys.argv:
     print("{}")
     sys.exit(0)
 
-# Retrieve Tailscale API token from Vault
-vault_address = os.environ["VAULT_ADDR"]
-vault_token = os.environ["VAULT_TOKEN"]
-token = requests.get(
-    f"{vault_address}/v1/kv/data/buildkite/hosting-backup-plausible",
-    headers={"Authorization": f"Bearer {vault_token}"},
-).json()["data"]["data"]["tailscale_api_token"]
-
 # Query tailnet for all devices
 tailnet = "nchlswhttkr.github"
+token = os.environ["TAILSCALE_API_TOKEN"]
 devices = requests.get(
     f"https://api.tailscale.com/api/v2/tailnet/{tailnet}/devices",
     headers={"Authorization": f"Bearer {token}"},

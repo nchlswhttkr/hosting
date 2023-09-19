@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -euo pipefail
+
+if [[ "$BUILDKITE_PIPELINE_SLUG" == "hosting-backup-plausible" && "$BUILDKITE_STEP_KEY" == "backup" ]]; then
+    TAILSCALE_API_TOKEN="$(vault kv get -field tailscale_api_token "kv/buildkite/$BUILDKITE_PIPELINE_SLUG")"
+    export TAILSCALE_API_TOKEN
+fi
+
+if [[ "$BUILDKITE_PIPELINE_SLUG" == "hosting-backup-write" && "$BUILDKITE_STEP_KEY" == "backup" ]]; then
+    TAILSCALE_API_TOKEN="$(vault kv get -field tailscale_api_token "kv/buildkite/$BUILDKITE_PIPELINE_SLUG")"
+    export TAILSCALE_API_TOKEN
+fi

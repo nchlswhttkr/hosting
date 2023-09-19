@@ -1,10 +1,9 @@
 steps:
   - label: ":plausible: Back up Plausible instance"
+    key: backup
     command: .buildkite/backup-plausible/backup.sh
     concurrency_group: $BUILDKITE_PIPELINE_SLUG/backup
     concurrency: 1
-    env:
-      VAULT_ROLE_ID: 703f9e62-1225-507b-ab21-9b762f8db482
     artifact_paths:
       - deploy/gandra-dee/plausible/backups/**/*.tar
     plugins:
@@ -12,15 +11,12 @@ steps:
           run: ci
           config: .buildkite/docker-compose.yml
           env:
-            # TODO: Fix the need to load Vault just to list Tailscale inventory
+            - BUILDKITE_PIPELINE_SLUG
+            - TAILSCALE_API_TOKEN
             - VAULT_ADDR
             - VAULT_TOKEN
-            - BUILDKITE_PIPELINE_SLUG
 
   - wait
 
   - label: ":aws: Upload backup to S3"
     command: .buildkite/backup-plausible/upload.sh
-    env:
-      VAULT_ROLE_ID: 703f9e62-1225-507b-ab21-9b762f8db482
-      VAULT_ASSUME_AWS_ROLE: Terraform

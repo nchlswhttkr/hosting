@@ -3,8 +3,6 @@ steps:
     command: .buildkite/backup-vault/backup.sh
     concurrency_group: $BUILDKITE_PIPELINE_SLUG/backup
     concurrency: 1
-    env:
-      VAULT_ROLE_ID: 703f9e62-1225-507b-ab21-9b762f8db482
     artifact_paths:
       - vault-*.snap
 
@@ -12,6 +10,3 @@ steps:
 
   - label: ":aws: Upload backup to S3"
     command: .buildkite/backup-vault/upload.sh
-    env:
-      VAULT_ROLE_ID: 703f9e62-1225-507b-ab21-9b762f8db482
-      VAULT_ASSUME_AWS_ROLE: Terraform
