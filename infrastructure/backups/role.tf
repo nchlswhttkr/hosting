@@ -22,10 +22,6 @@ data "aws_iam_policy_document" "assume_role_policy" {
   }
 }
 
-data "aws_ssm_parameter" "buildkite_oidc_provider_arn" {
-  name = "/elastic-buildkite-stack/buildkite-oidc-provider-arn"
-}
-
 data "aws_iam_policy_document" "upload_backups" {
   version = "2012-10-17"
   statement {
