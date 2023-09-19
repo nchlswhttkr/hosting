@@ -13,11 +13,11 @@ AWS_CREDENTIALS="$(
         --web-identity-token "$BUILDKITE_OIDC_TOKEN"
 )"
 
-AWS_ACCESS_KEY_ID="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.access_key)"
+AWS_ACCESS_KEY_ID="$(echo "$AWS_CREDENTIALS" | jq --raw-output .Credentials.AccessKeyId)"
 export AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.secret_key)"
+AWS_SECRET_ACCESS_KEY="$(echo "$AWS_CREDENTIALS" | jq --raw-output .Credentials.SecretAccessKey)"
 export AWS_SECRET_ACCESS_KEY
-AWS_SESSION_TOKEN="$(echo "$AWS_CREDENTIALS" | jq --raw-output .data.security_token)"
+AWS_SESSION_TOKEN="$(echo "$AWS_CREDENTIALS" | jq --raw-output .Credentials.SessionToken)"
 export AWS_SESSION_TOKEN
 
 echo "--- Downloading backup artifact"
