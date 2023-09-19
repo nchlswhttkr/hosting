@@ -35,37 +35,35 @@ data "aws_iam_policy_document" "buildkite_agent" {
   }
   statement {
     sid = "ReadBootstrapScript"
-
     actions = [
       "s3:GetObject"
     ]
-
-    resources = [
-      "${aws_s3_bucket.bootstrap.arn}/${aws_s3_object.bootstrap_script.id}"
-    ]
+    resources = ["${aws_s3_bucket.bootstrap.arn}/${aws_s3_object.bootstrap_script.id}"]
   }
 
   statement {
     sid = "ReadTailscaleAuthenticationKey"
-
     actions = [
       "ssm:GetParameter"
     ]
-
-    resources = [
-      aws_ssm_parameter.tailscale_authentication_key.arn
-    ]
+    resources = [aws_ssm_parameter.tailscale_authentication_key.arn]
   }
 
   statement {
     sid = "DecryptSecretParameters"
-
     actions = [
       "kms:Decrypt"
     ]
+    resources = [data.aws_kms_key.ssm_default.arn]
+  }
 
+  statement {
+    sid = "AssumeRole"
+    actions = [
+      "sts:AssumeRoleWithWebIdentity"
+    ]
     resources = [
-      data.aws_kms_key.ssm_default.arn
+      "*" # For now, we can't know the potential roles an agent could assume, it would be nice to attach policies to the main role but that role managed by the CloudFormation stack
     ]
   }
 }

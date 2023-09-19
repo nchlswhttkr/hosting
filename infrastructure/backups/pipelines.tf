@@ -1,7 +1,7 @@
 resource "buildkite_pipeline" "service" {
   for_each = local.services
 
-  name           = "hosting-backup-${each.key}"
+  name           = each.value.pipeline
   repository     = "git@github.com:nchlswhttkr/hosting.git"
   default_branch = "main"
 
