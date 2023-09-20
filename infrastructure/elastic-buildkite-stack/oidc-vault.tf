@@ -9,13 +9,14 @@ resource "vault_jwt_auth_backend" "buildkite" {
   }
 }
 
-resource "vault_jwt_auth_backend_role" "buildkite" {
+resource "vault_jwt_auth_backend_role" "buildkite_agent" {
   backend        = vault_jwt_auth_backend.buildkite.path
-  role_name      = "buildkite"
-  token_policies = ["default", vault_policy.buildkite.name]
+  role_name      = "buildkite-agent"
+  token_policies = ["default", vault_policy.buildkite_agent.name]
   role_type      = "jwt"
   user_claim     = "sub"
 
+  bound_audiences = ["vault.nicholas.cloud"]
   bound_claims = {
     organization_slug = local.buildkite_organization
   }
@@ -25,21 +26,20 @@ resource "vault_jwt_auth_backend_role" "buildkite" {
   }
 }
 
-resource "vault_policy" "buildkite" {
-  name = "buildkite"
-  # https://registry.terraform.io/providers/hashicorp/vault/latest/docs#token
-  # Note that the given token must have the update capability on the auth/token/create path in Vault in order to create child tokens.
+resource "vault_policy" "buildkite_agent" {
+  name   = "buildkite-agent"
   policy = <<-POLICY
-    path "auth/token/create" {
-      capabilities = ["update"]
-    }
-
     path "kv/data/buildkite/{{identity.entity.aliases.${vault_jwt_auth_backend.buildkite.accessor}.metadata.pipeline_slug}}" {
       capabilities = ["read"]
     }
 
     path "aws/sts/Terraform" {
       capabilities = ["read"]
+    }
+
+    # Needed by the AWS secret backend as it privisions its own child tokens
+    path "auth/token/create" {
+      capabilities = ["update"]
     }
 
     path "sys/storage/raft/snapshot" {

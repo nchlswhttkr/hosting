@@ -47,8 +47,8 @@ resource "aws_s3_object" "agent_environment" {
     export BUILDKITE_GIT_FETCH_FLAGS="-v --prune --tags"
     export VAULT_ADDR="https://vault.nicholas.cloud"
 
-    BUILDKITE_OIDC_JWT="$(buildkite-agent oidc request-token)"
-    VAULT_TOKEN="$(vault write -format=json auth/buildkite/login role=buildkite jwt="$BUILDKITE_OIDC_JWT" | jq --raw-output ".auth.client_token")"
+    BUILDKITE_OIDC_JWT="$(buildkite-agent oidc request-token --audience vault.nicholas.cloud)"
+    VAULT_TOKEN="$(vault write -format=json auth/buildkite/login role=buildkite-agent jwt="$BUILDKITE_OIDC_JWT" | jq --raw-output ".auth.client_token")"
     unset BUILDKITE_OIDC_JWT
     export VAULT_TOKEN
   EOF
