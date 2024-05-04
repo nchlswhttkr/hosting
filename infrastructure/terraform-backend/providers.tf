@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.3.0"
+  required_version = "~> 1.8.2"
 
   required_providers {
     aws = {
@@ -14,7 +14,7 @@ terraform {
   }
 
   backend "local" {
-    path = "/Users/nchlswhttkr/Google Drive/nicholas.cloud/terraform-backend.tfstate"
+    path = "/Users/nchlswhttkr/My Drive/nicholas.cloud/terraform-backend.tfstate"
   }
 }
 
@@ -27,6 +27,4 @@ provider "aws" {
   }
 }
 
-provider "pass" {
-  store = "/Users/nchlswhttkr/Google Drive/.password-store"
-}
+provider "pass" {}

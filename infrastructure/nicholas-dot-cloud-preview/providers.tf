@@ -1,4 +1,6 @@
 terraform {
+  required_version = "~> 1.8.2"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -20,8 +22,6 @@ terraform {
       version = "~> 3.0"
     }
   }
-
-  required_version = "~> 1.2"
 
   backend "s3" {
     bucket         = "nchlswhttkr-terraform-backend"
@@ -75,6 +75,4 @@ data "pass_password" "github_secret_token" {
   name = "website/github-access-token"
 }
 
-provider "pass" {
-  store = "/Users/nchlswhttkr/Google Drive/.password-store"
-}
+provider "pass" {}

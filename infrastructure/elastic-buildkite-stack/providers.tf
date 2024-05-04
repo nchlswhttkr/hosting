@@ -10,11 +10,6 @@ terraform {
       version = "~> 0.19"
     }
 
-    pass = {
-      source  = "nicholas.cloud/nchlswhttkr/pass"
-      version = "~> 0.4"
-    }
-
     tailscale = {
       source  = "tailscale/tailscale"
       version = "~> 0.13"
@@ -75,10 +70,6 @@ data "vault_aws_access_credentials" "creds" {
   backend = "aws"
   role    = "Terraform"
   type    = "sts"
-}
-
-provider "pass" {
-  store = "/Users/nchlswhttkr/Google Drive/.password-store"
 }
 
 provider "vault" {}
