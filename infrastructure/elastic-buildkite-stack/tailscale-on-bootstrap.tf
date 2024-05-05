@@ -9,13 +9,13 @@ resource "aws_s3_object" "bootstrap_script" {
         #!/bin/bash
         set -euo pipefail
 
-        sudo yum update -y
-        sudo yum install -y yum-utils gnupg2
-        sudo yum-config-manager -y --add-repo https://pkgs.tailscale.com/stable/amazon-linux/2/tailscale.repo
-        sudo yum install -y tailscale
+        sudo dnf -y update
+        sudo dnf -y install rsync
+        sudo dnf -y config-manager --add-repo https://pkgs.tailscale.com/stable/amazon-linux/2/tailscale.repo
+        sudo dnf -y install tailscale
         sudo systemctl enable --now tailscaled
-        sudo yum-config-manager -y --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-        sudo yum -y install terraform vault
+        sudo dnf -y config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
+        sudo dnf -y install terraform vault
 
         TAILSCALE_AUTHENTICATION_KEY=$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.tailscale_authentication_key.name}" | jq --raw-output ".Parameter.Value")
         sudo tailscale up --authkey "$TAILSCALE_AUTHENTICATION_KEY" --hostname "buildkite"

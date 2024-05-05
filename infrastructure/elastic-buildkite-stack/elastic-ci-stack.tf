@@ -1,6 +1,6 @@
 resource "aws_cloudformation_stack" "buildkite" {
   name         = "elastic-buildkite-stack"
-  template_url = "https://s3.amazonaws.com/buildkite-aws-stack/v5.19.0/aws-stack.yml"
+  template_url = "https://s3.amazonaws.com/buildkite-aws-stack/v6.20.0/aws-stack.yml"
   capabilities = ["CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]
   parameters = {
     # https://buildkite.com/docs/agent/v3/elastic-ci-aws/parameters
@@ -8,11 +8,11 @@ resource "aws_cloudformation_stack" "buildkite" {
 
     # Auto-scaling EC2 instances
     MaxSize            = 3
-    InstanceType       = "t3a.small"
+    InstanceTypes      = "t3a.small"
     RootVolumeSize     = 20
     OnDemandPercentage = 0
     BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.bootstrap_script.id}"
-    ManagedPolicyARN   = aws_iam_policy.buildkite_agent.arn
+    ManagedPolicyARNs  = aws_iam_policy.buildkite_agent.arn
 
     # Misc
     EnableCostAllocationTags = true
@@ -21,8 +21,7 @@ resource "aws_cloudformation_stack" "buildkite" {
 
     # Buildkite agent settings
     AgentsPerInstance         = 2
-    ScaleInIdlePeriod         = 600 # 10 minutes
-    BuildkiteAgentExperiments = "ansi-timestamps,resolve-commit-after-checkout"
+    BuildkiteAgentExperiments = "resolve-commit-after-checkout"
   }
 }
 
