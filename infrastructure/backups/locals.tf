@@ -13,8 +13,9 @@ locals {
     }
 
     write = {
-      name     = "Writefreely",
-      schedule = "0 6 * * 6 Australia/Melbourne"
+      name = "Writefreely",
+      # Every 4th SAT https://github.com/floraison/fugit#the-modulo-extension
+      schedule = "0 6 * * 6%4 Australia/Melbourne"
       pipeline = "hosting-backup-write"
     }
   }
