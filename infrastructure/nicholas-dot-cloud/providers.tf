@@ -65,7 +65,8 @@ data "pass_password" "github_secret_token" {
 provider "pass" {}
 
 provider "tailscale" {
-  api_key = data.vault_kv_secret_v2.tailscale.data.api_token
+  oauth_client_id     = data.vault_kv_secret_v2.tailscale.data.client_id
+  oauth_client_secret = data.vault_kv_secret_v2.tailscale.data.client_secret
 }
 
 data "vault_kv_secret_v2" "tailscale" {

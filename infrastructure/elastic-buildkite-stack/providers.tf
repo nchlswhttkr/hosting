@@ -85,5 +85,11 @@ data "vault_kv_secret_v2" "buildkite" {
 }
 
 provider "tailscale" {
-  tailnet = "nchlswhttkr.github"
+  oauth_client_id     = data.vault_kv_secret_v2.tailscale.data.client_id
+  oauth_client_secret = data.vault_kv_secret_v2.tailscale.data.client_secret
+}
+
+data "vault_kv_secret_v2" "tailscale" {
+  mount = "kv"
+  name  = "nchlswhttkr/tailscale"
 }
