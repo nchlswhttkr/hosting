@@ -1,6 +1,6 @@
 resource "aws_cloudformation_stack" "buildkite" {
   name         = "elastic-buildkite-stack"
-  template_url = "https://s3.amazonaws.com/buildkite-aws-stack/v6.20.0/aws-stack.yml"
+  template_url = "https://s3.amazonaws.com/buildkite-aws-stack/v6.35.0/aws-stack.yml"
   capabilities = ["CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]
   parameters = {
     # https://buildkite.com/docs/agent/v3/elastic-ci-aws/parameters
@@ -11,7 +11,8 @@ resource "aws_cloudformation_stack" "buildkite" {
     InstanceTypes      = "t3a.small"
     RootVolumeSize     = 20
     OnDemandPercentage = 0
-    BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.bootstrap_script.id}"
+    BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.agent_bootstrap_script.id}"
+    AgentEnvFileUrl    = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.agent_environment_file.id}"
     ManagedPolicyARNs  = aws_iam_policy.buildkite_agent.arn
 
     # Misc
@@ -20,8 +21,9 @@ resource "aws_cloudformation_stack" "buildkite" {
     CostAllocationTagValue   = local.aws_tags["Project"]
 
     # Buildkite agent settings
-    AgentsPerInstance         = 2
-    BuildkiteAgentExperiments = "resolve-commit-after-checkout"
+    AgentsPerInstance            = 2
+    BuildkiteAgentExperiments    = "resolve-commit-after-checkout"
+    BuildkiteAgentTracingBackend = "opentelemetry"
   }
 }
 

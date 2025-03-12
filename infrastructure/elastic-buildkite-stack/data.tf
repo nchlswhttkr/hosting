@@ -13,3 +13,8 @@ data "aws_ssm_parameter" "state_lock_table_arn" {
 data "aws_kms_key" "ssm_default" {
   key_id = "alias/aws/ssm"
 }
+
+data "vault_kv_secret_v2" "honeycomb" {
+  mount = "kv"
+  name  = "nchlswhttkr/honeycomb"
+}

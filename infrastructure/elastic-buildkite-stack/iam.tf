@@ -38,7 +38,7 @@ data "aws_iam_policy_document" "buildkite_agent" {
     actions = [
       "s3:GetObject"
     ]
-    resources = ["${aws_s3_bucket.bootstrap.arn}/${aws_s3_object.bootstrap_script.id}"]
+    resources = ["${aws_s3_bucket.bootstrap.arn}/*"]
   }
 
   statement {
