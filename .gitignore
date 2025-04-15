@@ -1,2 +1,4 @@
 .terraform/
-deploy/gandra-dee/plausible/backups/
+deploy/writefreely/backups/
+
+.venv

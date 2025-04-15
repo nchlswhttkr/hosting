@@ -12,24 +12,32 @@
     src: "{{ playbook_dir }}/{{ nginx_hostname }}.nginx"
     dest: /etc/nginx/sites-enabled/{{ nginx_hostname }}
 
+- name: Configure Certbot
+  become: true
+  ansible.builtin.copy:
+    src: "certbot-cli.ini"
+    dest: /etc/letsencrypt/cli.ini
+
+- name: Set Cloudflare credentials for Certbot
+  become: true
+  ansible.builtin.copy:
+    # TODO: Fix circular dependency on Vault
+    content: |
+      dns_cloudflare_api_token = {{ lookup('community.general.passwordstore', 'hosting/cloudflare-dns-api-token') }}
+    dest: /etc/letsencrypt/cloudflare.ini
+    mode: "0600"
+
 - name: Check for presence of TLS certificates
   register: check_tls_certificates
   ansible.builtin.stat:
     path: /etc/letsencrypt/live/{{ nginx_hostname }}/privkey.pem
 
-- name: Pause for TLS certificates to be created
+- name: Provision TLS certificate with Cerbot
+  register: provision_tls_certificates
   when: not check_tls_certificates.stat.exists
-  ansible.builtin.pause:
+  ansible.builtin.shell: certbot certonly --domain {{ nginx_hostname }}
 
-# TODO: Add a rescue option to restore a backup of Nginx config/certs
-- name: Validate Nginx configuration
-  when: configure_nginx.changed
+- name: Reload Nginx
+  when: provision_tls_certificates.changed or configure_nginx.changed
   become: true
-  ansible.builtin.shell: nginx -t
-
-- name: Restart Nginx
-  when: configure_nginx.changed
-  become: true
-  ansible.builtin.systemd:
-    name: nginx
-    state: restarted
+  ansible.builtin.shell: nginx -s reload

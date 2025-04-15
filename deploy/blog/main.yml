@@ -1,0 +1,88 @@
+- name: Deploy Blog (https://nicholas.cloud/)
+  hosts: blog
+  gather_facts: false
+
+  pre_tasks:
+    - name: Install general tools and libraries
+      become: true
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - git
+          - jq
+        state: latest
+
+    - name: Keep system packages up to date
+      become: true
+      ansible.builtin.apt:
+        autoremove: true
+        update_cache: true
+        name: "*"
+        state: latest
+
+    - name: Create local user
+      become: true
+      register: create_user
+      ansible.builtin.user:
+        name: blog
+        shell: /bin/bash
+
+  roles:
+    - role: ../roles/nginx
+      become: true
+      vars:
+        nginx_hostname: "nicholas.cloud"
+
+  tasks:
+    - name: Ensure hosting directory exists
+      become: true
+      ansible.builtin.file:
+        path: /var/www/nicholas.cloud
+        state: directory
+        owner: blog
+        group: blog
+
+    - name: Sync public files
+      register: sync_public_files
+      remote_user: blog
+      ansible.posix.synchronize:
+        src: ~/My Drive/nicholas.cloud/public-files/
+        dest: /var/www/nicholas.cloud/files/
+        delete: true
+
+    - name: Ensure public files are accessible
+      when: sync_public_files.changed
+      become: true
+      ansible.builtin.shell: chmod --recursive +rX /var/www/nicholas.cloud/files
+
+    - name: Check website content is populated
+      register: website_populated
+      ansible.builtin.stat:
+        path: /var/www/nicholas.cloud/index.html
+
+    - name: Trigger build of blog on Buildkite
+      when: not website_populated.stat.exists
+      register: trigger_buildkite_build
+      ansible.builtin.uri:
+        url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds
+        method: POST
+        headers:
+          Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/hosting/buildkite').data.data.api_token }}
+        body_format: json
+        body:
+          commit: HEAD
+          branch: main
+        status_code: [201]
+
+    # TODO: Grab build number from previous step
+    - name: Wait for blog build in Buildkite to finish
+      when: not website_populated.stat.exists
+      register: buildkite_result
+      until: buildkite_result.json[0].state in ["passed", "blocked", "failed"]
+      failed_when: buildkite_result.json[0].state != "passed"
+      retries: 30 # 30 * 20s ~= 10 minutes
+      delay: 20 # seconds
+      ansible.builtin.uri:
+        url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds/{{ trigger_buildkite_build.json[0].number }}
+        headers:
+          Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/hosting/buildkite').data.data.api_token }}

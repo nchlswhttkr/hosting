@@ -1,0 +1,102 @@
+- name: Deploy Vault (https://vault.nicholas.cloud/)
+  hosts: gyro
+  gather_facts: false
+  vars:
+    vault_version: "1.14.0"
+
+  pre_tasks:
+    - name: Install general tools and libraries
+      become: true
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - git
+          - jq
+        state: latest
+
+    - name: Install D-Bus systemd user integration
+      register: install_dbus_user_session
+      become: true
+      ansible.builtin.apt:
+        name: dbus-user-session
+        state: latest
+
+    - name: Reboot if D-Bus systemd user integration was installed
+      when: install_dbus_user_session.changed
+      become: true
+      ansible.builtin.reboot: ~
+
+    - name: Keep system packages up to date
+      become: true
+      ansible.builtin.apt:
+        autoremove: true
+        update_cache: true
+        name: "*"
+        state: latest
+
+    - name: Create Vault user
+      become: true
+      register: create_user
+      ansible.builtin.user:
+        name: vault
+        shell: /bin/bash
+
+    - name: Enable linger for Vault user
+      become: true
+      when: create_user.changed
+      ansible.builtin.shell: loginctl enable-linger vault
+
+  roles:
+    - role: ../roles/nginx
+      become: true
+      vars:
+        nginx_hostname: vault.nicholas.cloud
+
+  tasks:
+    - name: Ensure vault directories exist
+      remote_user: vault
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - /home/vault/.config/systemd/user/
+        - /home/vault/data
+
+    - name: Download and install Vault
+      when: ansible_local.vault.versions.vault_version|d != vault_version
+      register: install_vault
+      remote_user: vault
+      ansible.builtin.unarchive:
+        dest: /home/vault/
+        remote_src: true
+        # TODO: Get architecture dynamically instead of hardcoding it
+        src: https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{vault_version}}_linux_arm64.zip
+
+    - name: Allow Vault to call mlock()
+      when: install_vault.changed
+      become: true
+      # remote_user: nchlswhttkr
+      # https://support.hashicorp.com/hc/en-us/articles/115012787688-Vault-and-mlock-
+      ansible.builtin.shell: setcap cap_ipc_lock=+ep $(readlink -f /home/vault/vault)
+
+    - name: Configure Vault server
+      register: configure_vault
+      remote_user: vault
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      with_items:
+        - src: config.hcl
+          dest: /home/vault/config.hcl
+        - src: vault.service.j2
+          dest: /home/vault/.config/systemd/user/vault.service
+
+    - name: Restart Vault service
+      when: install_vault.changed or configure_vault.changed
+      remote_user: vault
+      ansible.builtin.systemd:
+        name: vault
+        scope: user
+        state: restarted
+        enabled: true
+        daemon_reload: true

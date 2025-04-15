@@ -1,5 +1,5 @@
-ansible ~= 6.0
-black ~= 23.1
-hvac ~= 1.1
+ansible ~= 9.5
+black ~= 24.4
+hvac ~= 2.2
 passlib ~= 1.7.4
-requests ~= 2.28
+requests ~= 2.31
