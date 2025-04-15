@@ -1,4 +1,3 @@
-version: "3"
 services:
   ci:
     image: python:3.10
