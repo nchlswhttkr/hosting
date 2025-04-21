@@ -18,7 +18,7 @@ resource "vault_jwt_auth_backend_role" "buildkite_agent" {
 
   bound_audiences = ["vault.nicholas.cloud"]
   bound_claims = {
-    organization_slug = local.buildkite_organization
+    organization_slug = data.vault_kv_secret_v2.buildkite.data.organization
   }
 
   claim_mappings = {

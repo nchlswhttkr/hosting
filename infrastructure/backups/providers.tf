@@ -40,7 +40,7 @@ provider "aws" {
 
 provider "buildkite" {
   api_token    = data.vault_kv_secret_v2.buildkite.data.api_token
-  organization = "nchlswhttkr"
+  organization = data.vault_kv_secret_v2.buildkite.data.organization
 }
 
 provider "vault" {}

@@ -46,7 +46,7 @@ resource "aws_s3_object" "agent_environment_file" {
   bucket  = aws_s3_bucket.bootstrap.bucket
   key     = "env"
   content = <<-EOF
-        OTEL_EXPORTER_OTLP_ENDPOINT="https://api.honeycomb.io"
+        OTEL_EXPORTER_OTLP_ENDPOINT="${data.vault_kv_secret_v2.honeycomb.data.endpoint}"
         OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${data.vault_kv_secret_v2.honeycomb.data.ingest_api_key}"
     EOF
 }
