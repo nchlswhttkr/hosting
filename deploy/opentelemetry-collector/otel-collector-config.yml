@@ -1,0 +1,25 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: vault
+          scrape_interval: 60s
+          metrics_path: /v1/sys/metrics
+          authorization:
+            credentials: "{{ vault_token }}"
+          static_configs:
+            - targets: [vault.nicholas.cloud]
+
+exporters:
+  otlp/metrics:
+    endpoint: "api.honeycomb.io:443"
+    headers:
+      "x-honeycomb-team": "{{ honeycomb_ingest_api_key }}"
+      "x-honeycomb-dataset": "vault"
+
+service:
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      processors: []
+      exporters: [otlp/metrics]
