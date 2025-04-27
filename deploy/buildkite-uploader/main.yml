@@ -1,6 +1,5 @@
 - name: Deploy Buildkite Uploader
   hosts: gyro
-  gather_facts: false
   vars:
     buildkite_agent_version: 3.96.0
     # TODO: Re-enable BAM once OpenTelemetry support is available

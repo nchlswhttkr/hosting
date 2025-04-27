@@ -47,7 +47,7 @@ make -C deploy/vault
 make -C deploy/writefreely
 ```
 
-Some projects include subcommands
+Some projects include subcommands.
 
 ```sh
 make -C deploy/writefreely backup
@@ -62,4 +62,4 @@ There's a couple of assumed tools and setup needed before a new host is good to 
   - Installing Certbot will require [Snap](https://snapcraft.io/docs/installing-snap-on-raspbian)
   - For now, use [the Cloudflare plugin](https://certbot-dns-cloudflare.readthedocs.io/en/stable/)
 
-TLS ertificate provisioning and automatic renewal will be set up as part of the `nginx` role.
+TLS certificate provisioning and automatic renewal will be set up as part of the `nginx` role.

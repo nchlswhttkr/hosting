@@ -1,6 +1,5 @@
 - name: Deploy Vault (https://vault.nicholas.cloud/)
   hosts: gyro
-  gather_facts: false
   vars:
     vault_version: "1.14.0"
 

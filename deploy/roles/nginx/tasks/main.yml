@@ -1,16 +1,46 @@
-- name: Install Nginx
+- name: Ensure keyring directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+
+- name: Get Nginx signing key
+  become: true
+  ansible.builtin.get_url:
+    url: https://nginx.org/keys/nginx_signing.key
+    dest: /etc/apt/keyrings/nginx.asc
+    force: true
+
+- name: Add Nginx package repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/keyrings/nginx.asc] http://nginx.org/packages/mainline/{{ ansible_facts['lsb']['id'].lower() }} {{ ansible_facts['lsb']['codename'] }} nginx"
+
+- name: Add Nginx package and modules
   become: true
   ansible.builtin.apt:
     name:
-      - nginx-extras
+      - nginx
+      - nginx-module-otel
     state: latest
 
 - name: Configure Nginx
   register: configure_nginx
   become: true
+  vars:
+    # TODO: Fix circular dependency on Vault
+    honeycomb_ingest_api_key: "{{ lookup('community.general.passwordstore', 'hosting/nginx-honeycomb-ingest-api-key') }}"
+  ansible.builtin.template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Copy Nginx host configuration
+  register: configure_host
+  become: true
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/{{ nginx_hostname }}.nginx"
-    dest: /etc/nginx/sites-enabled/{{ nginx_hostname }}
+    src: "{{ playbook_dir }}/{{ nginx_hostname }}.conf"
+    dest: /etc/nginx/conf.d/{{ nginx_hostname }}.conf
+    mode: "0600"
 
 - name: Configure Certbot
   become: true
@@ -37,7 +67,12 @@
   when: not check_tls_certificates.stat.exists
   ansible.builtin.shell: certbot certonly --domain {{ nginx_hostname }}
 
+- name: Test Nginx confiiguration
+  when: provision_tls_certificates.changed or configure_nginx.changed or configure_host.changed
+  become: true
+  ansible.builtin.shell: nginx -t
+
 - name: Reload Nginx
-  when: provision_tls_certificates.changed or configure_nginx.changed
+  when: provision_tls_certificates.changed or configure_nginx.changed or configure_host.changed
   become: true
   ansible.builtin.shell: nginx -s reload
