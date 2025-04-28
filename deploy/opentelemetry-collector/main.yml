@@ -83,6 +83,11 @@
           dest: /home/otel/.config/systemd/user/otel-collector.service
           mode: "0644"
 
+    - name: Test OpenTelemetry Collector confiiguration
+      when: install_otel_collector.changed or configure_otel_collector.changed
+      remote_user: otel
+      ansible.builtin.shell: /home/otel/otel-collector/otelcol validate --config otel-collector-config.yml
+
     - name: Restart OpenTelemetry Collector service
       when: install_otel_collector.changed or configure_otel_collector.changed
       remote_user: otel
