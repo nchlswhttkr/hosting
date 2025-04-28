@@ -10,6 +10,21 @@ receivers:
           static_configs:
             - targets: [vault.nicholas.cloud]
 
+  prometheus/node:
+    config:
+      scrape_configs:
+        - job_name: blog
+          scrape_interval: 15s
+          static_configs:
+            - targets:
+                - blog:9100
+        - job_name: home
+          scrape_interval: 60s
+          static_configs:
+            - targets:
+                - boyd:9100
+                - gyro:9100
+
 processors:
   batch:
 
@@ -19,6 +34,11 @@ exporters:
     headers:
       "x-honeycomb-team": "{{ honeycomb_ingest_api_key }}"
       "x-honeycomb-dataset": "vault"
+  otlp/node:
+    endpoint: "api.honeycomb.io:443"
+    headers:
+      "x-honeycomb-team": "{{ honeycomb_ingest_api_key }}"
+      "x-honeycomb-dataset": "node"
 
 service:
   pipelines:
@@ -26,3 +46,7 @@ service:
       receivers: [prometheus/vault]
       processors: [batch]
       exporters: [otlp/vault]
+    metrics/node:
+      receivers: [prometheus/node]
+      processors: [batch]
+      exporters: [otlp/node]
