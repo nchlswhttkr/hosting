@@ -9,8 +9,8 @@ services:
     working_dir: /hosting
     volumes:
       - ..:/hosting
-      - /var/run/tailscale/tailscaled.sock
-      - /var/lib/tailscale/tailscaled.state
+      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
+      - /var/lib/tailscale/tailscaled.state:/var/lib/tailscale/tailscaled.state
     environment:
       - BUILDKITE_PIPELINE_SLUG
       - VAULT_ADDR
