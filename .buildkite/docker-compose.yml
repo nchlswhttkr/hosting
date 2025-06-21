@@ -2,13 +2,14 @@ services:
   ci:
     build:
       context: .
-    userns_mode: host
-    network_mode: host
-    devices:
-      - /dev/net/tun
+    # userns_mode: host
+    # network_mode: host
+    # devices:
+    #   - /dev/net/tun
     working_dir: /hosting
     volumes:
       - ..:/hosting
+      - /var/run/tailscale/tailscaled.sock
     environment:
       - BUILDKITE_PIPELINE_SLUG
       - VAULT_ADDR
