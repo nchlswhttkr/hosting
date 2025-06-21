@@ -2,7 +2,7 @@ services:
   ci:
     build:
       context: .
-    userns: host
+    userns_mode: host
     network_mode: host
     working_dir: /hosting
     volumes:
