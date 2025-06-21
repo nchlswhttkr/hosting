@@ -19,8 +19,8 @@
       ansible.builtin.shell: systemctl --user start writefreely
     - name: Copy backup file to controller
       ansible.posix.synchronize:
-        src: /home/write/backups/{{ backup_date }}.tar
-        dest: backups/
+        src: /home/write/backups
+        dest: ./
         mode: pull
     - name: Purge backup directory
       ansible.builtin.file:
