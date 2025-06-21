@@ -74,7 +74,6 @@
     - name: Allow Vault to call mlock()
       when: install_vault.changed
       become: true
-      # remote_user: nchlswhttkr
       # https://support.hashicorp.com/hc/en-us/articles/115012787688-Vault-and-mlock-
       ansible.builtin.shell: setcap cap_ipc_lock=+ep $(readlink -f /home/vault/vault)
 

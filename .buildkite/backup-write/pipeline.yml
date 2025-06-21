@@ -12,7 +12,6 @@ steps:
           config: .buildkite/docker-compose.yml
           env:
             - BUILDKITE_PIPELINE_SLUG
-            - TAILSCALE_API_TOKEN
             - VAULT_ADDR
             - VAULT_TOKEN
 
