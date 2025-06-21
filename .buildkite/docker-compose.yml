@@ -1,0 +1,12 @@
+services:
+  ci:
+    build:
+      context: .
+    network_mode: host
+    working_dir: /hosting
+    volumes:
+      - ..:/hosting
+    environment:
+      - BUILDKITE_PIPELINE_SLUG
+      - VAULT_ADDR
+      - VAULT_TOKEN
