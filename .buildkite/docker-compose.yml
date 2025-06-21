@@ -10,6 +10,7 @@ services:
     volumes:
       - ..:/hosting
       - /var/run/tailscale/tailscaled.sock
+      - /var/lib/tailscale/tailscaled.state
     environment:
       - BUILDKITE_PIPELINE_SLUG
       - VAULT_ADDR
