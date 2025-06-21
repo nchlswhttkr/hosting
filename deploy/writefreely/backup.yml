@@ -18,6 +18,11 @@
     - name: Restart Writefreely
       ansible.builtin.shell: systemctl --user start writefreely
     - name: Copy backup file to controller
-      ansible.builtin.fetch:
+      ansible.posix.synchronize:
         src: /home/write/backups/{{ backup_date }}.tar
-        dest: backups
+        dest: backups/
+        mode: pull
+    - name: Purge backup directory
+      ansible.builtin.file:
+        path: /home/write/backups
+        state: absent

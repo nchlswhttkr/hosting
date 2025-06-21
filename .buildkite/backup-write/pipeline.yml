@@ -5,7 +5,7 @@ steps:
     concurrency_group: $BUILDKITE_PIPELINE_SLUG/backup
     concurrency: 1
     artifact_paths:
-      - deploy/boyd/writefreely/backups/**/*.tar
+      - deploy/writefreely/backups/*.tar
     plugins:
       - docker-compose#v3.10.0:
           run: ci
