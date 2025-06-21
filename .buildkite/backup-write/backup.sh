@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+echo "--- Getting Tailscale status"
+tailscale status --json
+
 echo "--- Preparing runtime environment"
 make -C deploy
 
