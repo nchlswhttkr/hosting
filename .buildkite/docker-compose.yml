@@ -1,0 +1,12 @@
+services:
+  ci:
+    build:
+      context: .
+    working_dir: /hosting
+    volumes:
+      - ..:/hosting
+      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
+    environment:
+      - BUILDKITE_PIPELINE_SLUG
+      - VAULT_ADDR
+      - VAULT_TOKEN
