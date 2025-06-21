@@ -4,8 +4,8 @@ services:
       context: .
     # userns_mode: host
     # network_mode: host
-    devices:
-      - /dev/net/tun:/dev/net/tun
+    # devices:
+    #   - /dev/net/tun:/dev/net/tun
     working_dir: /hosting
     volumes:
       - ..:/hosting
