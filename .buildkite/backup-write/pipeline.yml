@@ -6,14 +6,6 @@ steps:
     concurrency: 1
     artifact_paths:
       - deploy/boyd/writefreely/backups/**/*.tar
-    plugins:
-      - docker-compose#v3.10.0:
-          run: ci
-          config: .buildkite/docker-compose.yml
-          env:
-            - BUILDKITE_PIPELINE_SLUG
-            - VAULT_ADDR
-            - VAULT_TOKEN
 
   - wait
 

@@ -1,6 +1,0 @@
-services:
-  ci:
-    image: python:3.10
-    working_dir: /hosting
-    volumes:
-      - ..:/hosting
