@@ -4,12 +4,11 @@ steps:
     command: .buildkite/backup-write/backup.sh
     concurrency_group: $BUILDKITE_PIPELINE_SLUG/backup
     concurrency: 1
-    artifact_paths:
-      - deploy/writefreely/backups/*.tar
     plugins:
       - docker-compose#v3.10.0:
           run: ci
           config: .buildkite/docker-compose.yml
+          mount-buildkite-agent: true
 
   - wait
 
