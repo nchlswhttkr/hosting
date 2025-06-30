@@ -10,6 +10,11 @@ terraform {
       version = "~> 0.19"
     }
 
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
+    }
+
     tailscale = {
       source  = "tailscale/tailscale"
       version = "~> 0.13"
@@ -82,6 +87,15 @@ provider "buildkite" {
 data "vault_kv_secret_v2" "buildkite" {
   mount = "kv"
   name  = "hosting/buildkite"
+}
+
+provider "github" {
+  token = data.vault_kv_secret_v2.github.data.access_token
+}
+
+data "vault_kv_secret_v2" "github" {
+  mount = "kv"
+  name  = "nchlswhttkr/github"
 }
 
 provider "tailscale" {
