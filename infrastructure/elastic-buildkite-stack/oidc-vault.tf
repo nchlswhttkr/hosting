@@ -29,7 +29,7 @@ resource "vault_jwt_auth_backend_role" "buildkite_agent" {
 resource "vault_policy" "buildkite_agent" {
   name   = "buildkite-agent"
   policy = <<-POLICY
-    path "kv/data/buildkite/{{identity.entity.aliases.${vault_jwt_auth_backend.buildkite.accessor}.metadata.pipeline_slug}}" {
+    path "${vault_mount.buildkite.path}/data/{{identity.entity.aliases.${vault_jwt_auth_backend.buildkite.accessor}.metadata.pipeline_slug}}" {
       capabilities = ["read"]
     }
 
@@ -46,4 +46,9 @@ resource "vault_policy" "buildkite_agent" {
       capabilities = ["read"]
     }
   POLICY
+}
+
+resource "vault_mount" "buildkite" {
+  path = "buildkite"
+  type = "kv-v2"
 }
