@@ -24,39 +24,43 @@ resource "digitalocean_droplet" "web" {
   tags       = [local.digitalocean_web_server_tag]
 
   user_data = <<-EOF
-#cloud-config
----
-apt:
-  sources:
-    tailscale.list:
-      source: "deb https://pkgs.tailscale.com/stable/ubuntu noble main"
-      key: ${jsonencode(data.http.tailscale_signing_key.response_body)}
-packages:
-  - "tailscale"
-snap:
-  commands:
-    - snap install core
-    - snap refresh core
-    - snap install --classic certbot
-    - snap set certbot trust-plugin-with-root=ok
-    - snap install certbot-dns-cloudflare
-users:
-  - name: nchlswhttkr
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    shell: /bin/bash
-runcmd:
-  - ["ln", "-s", "/snap/bin/certbot", "/usr/bin/certbot"]
-  - ["tailscale", "up", "--ssh", "--auth-key", "${tailscale_tailnet_key.web.key}"]
-EOF
+    #cloud-config
+    ---
+    apt:
+      sources:
+        tailscale.list:
+          source: "deb https://pkgs.tailscale.com/stable/ubuntu noble main"
+          key: ${jsonencode(data.http.tailscale_signing_key.response_body)}
+    packages:
+      - "tailscale"
+    snap:
+      commands:
+        - snap install core
+        - snap refresh core
+        - snap install --classic certbot
+        - snap set certbot trust-plugin-with-root=ok
+        - snap install certbot-dns-cloudflare
+    users:
+      - name: nchlswhttkr
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        shell: /bin/bash
+    runcmd:
+      - ["ln", "-s", "/snap/bin/certbot", "/usr/bin/certbot"]
+      - ["tailscale", "up", "--ssh", "--auth-key", "${tailscale_tailnet_key.web.key}"]
+  EOF
+
+  lifecycle {
+    ignore_changes = [user_data]
+  }
 }
 
 data "http" "tailscale_signing_key" {
   url = "https://pkgs.tailscale.com/stable/ubuntu/noble.gpg"
 }
 
-# TODO: This may be recreated by Terraform once it's cleared from Tailscale
 resource "tailscale_tailnet_key" "web" {
-  expiry        = 300 # 5 minutes
-  preauthorized = true
-  tags          = ["tag:website"]
+  expiry              = 300 # 5 minutes
+  preauthorized       = true
+  tags                = ["tag:website"]
+  recreate_if_invalid = "always"
 }
