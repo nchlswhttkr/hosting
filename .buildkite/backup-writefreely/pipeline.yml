@@ -1,7 +1,7 @@
 steps:
   - label: ":writing_hand: Back up Writefreely instance"
     key: backup
-    command: .buildkite/backup-write/backup.sh
+    command: .buildkite/backup-writefreely/backup.sh
     concurrency_group: $BUILDKITE_PIPELINE_SLUG/backup
     concurrency: 1
     plugins:
@@ -13,4 +13,4 @@ steps:
   - wait
 
   - label: ":aws: Upload backup to S3"
-    command: .buildkite/backup-write/upload.sh
+    command: .buildkite/backup-writefreely/upload.sh
