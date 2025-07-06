@@ -7,13 +7,6 @@ resource "digitalocean_firewall" "web" {
   name = "nicholas-dot-cloud"
   tags = [local.digitalocean_web_server_tag]
 
-  # Allow inbound SSH connections from within the project's VPC
-  inbound_rule {
-    protocol         = "tcp"
-    port_range       = "22"
-    source_addresses = [digitalocean_vpc.main.ip_range]
-  }
-
   # Allow inbound HTTPS requests
   inbound_rule {
     protocol         = "tcp"
@@ -26,13 +19,6 @@ resource "digitalocean_firewall" "web" {
     protocol         = "udp"
     port_range       = "41641"
     source_addresses = ["0.0.0.0/0", "::/0"]
-  }
-
-  # Allow outbound SSH requests
-  outbound_rule {
-    protocol              = "tcp"
-    port_range            = "22"
-    destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
   # Allow outbound DNS requests (UDP)

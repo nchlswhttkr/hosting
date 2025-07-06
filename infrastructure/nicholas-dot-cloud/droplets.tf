@@ -1,9 +1,3 @@
-# TODO: Manage this SSH key via Terraform
-resource "digitalocean_ssh_key" "remote_user" {
-  name       = "Remote access for machines hosting nicholas.cloud"
-  public_key = file("./remote-user.pub")
-}
-
 locals {
   digitalocean_region         = "syd1"
   digitalocean_web_server_tag = "nicholas-dot-cloud-web-servers"
@@ -21,11 +15,10 @@ resource "digitalocean_project_resources" "nicholas_dot_cloud" {
 }
 
 resource "digitalocean_droplet" "web" {
-  image      = "ubuntu-22-04-x64"
-  name       = "gandra-dee"
+  image      = "ubuntu-24-04-x64"
+  name       = "blog"
   region     = local.digitalocean_region
-  size       = "s-1vcpu-1gb"
-  ssh_keys   = [digitalocean_ssh_key.remote_user.fingerprint]
+  size       = "s-1vcpu-512mb-10gb"
   monitoring = true
   vpc_uuid   = digitalocean_vpc.main.id
   tags       = [local.digitalocean_web_server_tag]
@@ -36,7 +29,7 @@ resource "digitalocean_droplet" "web" {
 apt:
   sources:
     tailscale.list:
-      source: "deb https://pkgs.tailscale.com/stable/ubuntu jammy main"
+      source: "deb https://pkgs.tailscale.com/stable/ubuntu noble main"
       key: ${jsonencode(data.http.tailscale_signing_key.response_body)}
 packages:
   - "tailscale"
@@ -45,21 +38,25 @@ snap:
     - snap install core
     - snap refresh core
     - snap install --classic certbot
+    - snap set certbot trust-plugin-with-root=ok
+    - snap install certbot-dns-cloudflare
 users:
   - name: nchlswhttkr
     sudo: ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
 runcmd:
-  - ["tailscale", "up", "--ssh", "--auth-key", "${tailscale_tailnet_key.web.key}"]
   - ["ln", "-s", "/snap/bin/certbot", "/usr/bin/certbot"]
+  - ["tailscale", "up", "--ssh", "--auth-key", "${tailscale_tailnet_key.web.key}"]
 EOF
 }
 
 data "http" "tailscale_signing_key" {
-  url = "https://pkgs.tailscale.com/stable/ubuntu/jammy.gpg"
+  url = "https://pkgs.tailscale.com/stable/ubuntu/noble.gpg"
 }
 
 # TODO: This may be recreated by Terraform once it's cleared from Tailscale
 resource "tailscale_tailnet_key" "web" {
-  expiry = 3600 # 1 hour
+  expiry        = 300 # 5 minutes
+  preauthorized = true
+  tags          = ["tag:website"]
 }

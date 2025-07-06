@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.8.2"
+  required_version = "~> 1.8"
 
   required_providers {
     digitalocean = {
@@ -25,11 +25,6 @@ terraform {
     tailscale = {
       source  = "tailscale/tailscale"
       version = "~> 0.13"
-    }
-
-    tls = {
-      source  = "hashicorp/tls"
-      version = "~> 4.0"
     }
 
     vault = {
