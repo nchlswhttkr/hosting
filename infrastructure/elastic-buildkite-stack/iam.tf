@@ -6,34 +6,6 @@ resource "aws_iam_policy" "buildkite_agent" {
 
 data "aws_iam_policy_document" "buildkite_agent" {
   statement {
-    sid = "ListStateBucket"
-    actions = [
-      "s3:ListBucket"
-    ]
-    resources = [data.aws_ssm_parameter.state_bucket_arn.value]
-  }
-
-  statement {
-    sid = "ManageStateBucketObjects"
-    actions = [
-      "s3:GetObject",
-      "s3:PutObject",
-      "s3:DeleteObject"
-    ]
-    resources = ["${data.aws_ssm_parameter.state_bucket_arn.value}/*"]
-  }
-
-  statement {
-    sid = "ManageStateLockTable"
-    actions = [
-      "dynamodb:DescribeTable",
-      "dynamodb:GetItem",
-      "dynamodb:PutItem",
-      "dynamodb:DeleteItem"
-    ]
-    resources = [data.aws_ssm_parameter.state_lock_table_arn.value]
-  }
-  statement {
     sid = "ReadBootstrapScript"
     actions = [
       "s3:GetObject"
