@@ -77,8 +77,6 @@ data "vault_aws_access_credentials" "creds" {
   type    = "sts"
 }
 
-provider "vault" {}
-
 provider "buildkite" {
   api_token    = data.vault_kv_secret_v2.buildkite.data.api_token
   organization = data.vault_kv_secret_v2.buildkite.data.organization
@@ -107,3 +105,5 @@ data "vault_kv_secret_v2" "tailscale" {
   mount = "kv"
   name  = "nchlswhttkr/tailscale"
 }
+
+provider "vault" {}

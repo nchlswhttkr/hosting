@@ -47,8 +47,3 @@ resource "vault_policy" "buildkite_agent" {
     }
   POLICY
 }
-
-resource "vault_mount" "buildkite" {
-  path = "buildkite"
-  type = "kv-v2"
-}

@@ -67,3 +67,7 @@ data "aws_iam_policy_document" "buildkite_agent" {
     ]
   }
 }
+
+data "aws_kms_key" "ssm_default" {
+  key_id = "alias/aws/ssm"
+}

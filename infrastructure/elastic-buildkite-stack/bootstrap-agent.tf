@@ -50,3 +50,8 @@ resource "aws_s3_object" "agent_environment_file" {
         OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${data.vault_kv_secret_v2.honeycomb.data.ingest_api_key}"
     EOF
 }
+
+data "vault_kv_secret_v2" "honeycomb" {
+  mount = "kv"
+  name  = "nchlswhttkr/honeycomb"
+}
