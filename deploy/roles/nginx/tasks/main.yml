@@ -42,6 +42,12 @@
     dest: /etc/nginx/conf.d/{{ nginx_hostname }}.conf
     mode: "0600"
 
+- name: Ensure keyring directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/letsencrypt
+    state: directory
+
 - name: Configure Certbot
   become: true
   ansible.builtin.copy:
@@ -71,6 +77,14 @@
   when: provision_tls_certificates.changed or configure_nginx.changed or configure_host.changed
   become: true
   ansible.builtin.shell: nginx -t
+
+- name: Ensure Nginx is running
+  when: provision_tls_certificates.changed or configure_nginx.changed or configure_host.changed
+  become: true
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+    enabled: true
 
 - name: Reload Nginx
   when: provision_tls_certificates.changed or configure_nginx.changed or configure_host.changed

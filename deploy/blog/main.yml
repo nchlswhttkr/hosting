@@ -82,6 +82,6 @@
       retries: 30 # 30 * 20s ~= 10 minutes
       delay: 20 # seconds
       ansible.builtin.uri:
-        url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds/{{ trigger_buildkite_build.json[0].number }}
+        url: "{{ trigger_buildkite_build.json.url }}"
         headers:
           Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/hosting/buildkite').data.data.api_token }}
