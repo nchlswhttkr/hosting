@@ -26,7 +26,7 @@ resource "buildkite_pipeline_schedule" "service" {
   for_each = local.services
 
   pipeline_id = buildkite_pipeline.service[each.key].id
-  label       = "Back up my ${each.value.name} instance every week"
+  label       = "Back up ${each.value.name}"
   cronline    = each.value.schedule
   branch      = buildkite_pipeline.service[each.key].default_branch
 }
