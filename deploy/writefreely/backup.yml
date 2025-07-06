@@ -1,6 +1,6 @@
 ---
 - name: Create a backup
-  hosts: boyd
+  hosts: project_writefreely
   remote_user: write
   tasks:
     - name: Set backup date

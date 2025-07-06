@@ -1,5 +1,5 @@
 - name: Deploy Writefreely (https://write.nicholas.cloud/)
-  hosts: boyd
+  hosts: project_writefreely
   vars:
     writefreely_version: 0.13.1
 

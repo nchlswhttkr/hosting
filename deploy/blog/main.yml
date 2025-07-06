@@ -1,5 +1,5 @@
 - name: Deploy Blog (https://nicholas.cloud/)
-  hosts: blog
+  hosts: project_blog
 
   pre_tasks:
     - name: Install general tools and libraries

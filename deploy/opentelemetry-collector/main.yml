@@ -1,5 +1,5 @@
 - name: Deploy OpenTelemetry Collector
-  hosts: gyro
+  hosts: project_opentelemetry_collector
   vars:
     otel_collector_version: 0.124.0
 

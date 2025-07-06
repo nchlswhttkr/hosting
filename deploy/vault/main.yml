@@ -1,5 +1,5 @@
 - name: Deploy Vault (https://vault.nicholas.cloud/)
-  hosts: gyro
+  hosts: project_vault
   vars:
     vault_version: "1.14.0"
 

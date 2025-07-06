@@ -61,6 +61,6 @@ data "http" "tailscale_signing_key" {
 resource "tailscale_tailnet_key" "web" {
   expiry              = 300 # 5 minutes
   preauthorized       = true
-  tags                = ["tag:website"]
+  tags                = ["tag:project-blog"]
   recreate_if_invalid = "always"
 }
