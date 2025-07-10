@@ -64,3 +64,16 @@ resource "tailscale_tailnet_key" "web" {
   tags                = ["tag:project-blog"]
   recreate_if_invalid = "always"
 }
+
+resource "cloudflare_dns_record" "web" {
+  name    = "@"
+  ttl     = 1
+  type    = "A"
+  zone_id = data.cloudflare_zones.web.result[0].id
+  content = digitalocean_droplet.web.ipv4_address
+  proxied = true
+}
+
+data "cloudflare_zones" "web" {
+  name = "nicholas.cloud"
+}

@@ -2,6 +2,11 @@ terraform {
   required_version = "~> 1.8"
 
   required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 5.0"
+    }
+
     digitalocean = {
       source  = "digitalocean/digitalocean"
       version = "~> 2.10"
@@ -39,6 +44,14 @@ terraform {
     key            = "nicholas-dot-cloud"
     region         = "ap-southeast-4"
   }
+}
+
+provider "cloudflare" {
+  api_token = data.pass_password.cloudflare_api_token.password
+}
+
+data "pass_password" "cloudflare_api_token" {
+  name = "hosting/cloudflare-dns-api-token"
 }
 
 provider "digitalocean" {
