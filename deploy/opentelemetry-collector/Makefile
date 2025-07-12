@@ -10,4 +10,3 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 main:
 	@$(venv) && ansible-playbook --inventory ../inventory.py main.yml
-
