@@ -62,6 +62,7 @@
     - name: Trigger build of blog on Buildkite
       when: not website_populated.stat.exists
       register: trigger_buildkite_build
+      delegate_to: localhost
       ansible.builtin.uri:
         url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds
         method: POST
@@ -73,14 +74,14 @@
           branch: main
         status_code: [201]
 
-    # TODO: Grab build number from previous step
     - name: Wait for blog build in Buildkite to finish
       when: not website_populated.stat.exists
       register: buildkite_result
-      until: buildkite_result.json[0].state in ["passed", "blocked", "failed"]
-      failed_when: buildkite_result.json[0].state != "passed"
+      until: buildkite_result.json.state in ["passed", "blocked", "failed"]
+      failed_when: buildkite_result.json.state != "passed"
       retries: 30 # 30 * 20s ~= 10 minutes
       delay: 20 # seconds
+      delegate_to: localhost
       ansible.builtin.uri:
         url: "{{ trigger_buildkite_build.json.url }}"
         headers:
