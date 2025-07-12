@@ -6,16 +6,16 @@ Infrastructure, playbooks and configuration for self-hosted services I run.
 
 I automate some maintenance tasks with Buildkite.
 
-|                                                                                                                                                                         |                      |                                      |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------- | ------------------------------------ |
-| [![Build status](https://badge.buildkite.com/c4820c1695baf489be6ca1eb3104096ac289c88602b1d91ac3.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-vault)       | `backup-vault`       | Backs up my Hashicorp Vault instance |
-| [![Build status](https://badge.buildkite.com/1bebec299d9b84c6a43454cde22281d93a55370ce2a47d8dd7.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-writefreely) | `backup-writefreely` | Backs up my Writefreely instance     |
+| Pipeline                                                                                                                                                                                     | Description                          |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| [![Build status](https://badge.buildkite.com/c4820c1695baf489be6ca1eb3104096ac289c88602b1d91ac3.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-vault) `backup-vault`             | Backs up my Hashicorp Vault instance |
+| [![Build status](https://badge.buildkite.com/1bebec299d9b84c6a43454cde22281d93a55370ce2a47d8dd7.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-writefreely) `backup-writefreely` | Backs up my Writefreely instance     |
 
 ## Infrastructure
 
 I have a number of Terraform projects that don't belong to any particular project repositories, so I keep them here.
 
-|                              |                                                                              |
+| Project                      | Description                                                                  |
 | ---------------------------- | ---------------------------------------------------------------------------- |
 | `backups`                    | Automating backups of my self-hosted services                                |
 | `elastic-ci-stack`           | Autoscaling Buildkite agents, plus secrets needed by my Buildkite pipelines  |
