@@ -22,9 +22,19 @@ terraform {
       version = "~> 3.4"
     }
 
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.2"
+    }
+
     pass = {
       source  = "nicholas.cloud/nchlswhttkr/pass"
       version = "~> 0.1"
+    }
+
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.7"
     }
 
     tailscale = {

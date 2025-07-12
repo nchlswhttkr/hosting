@@ -7,6 +7,9 @@ export VAULT_TOKEN=$(shell pass show vault/root-token)
 apply: init
 	@terraform apply
 
+apply-replace-droplet: init
+	@terraform apply --replace digitalocean_droplet.web
+
 init:
 	@terraform init
 
