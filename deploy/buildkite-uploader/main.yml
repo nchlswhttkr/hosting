@@ -2,8 +2,6 @@
   hosts: project_buildkite_uploader
   vars:
     buildkite_agent_version: 3.96.0
-    # TODO: Re-enable BAM once OpenTelemetry support is available
-    # buildkite_agent_metrics_version: 5.9.13
 
   pre_tasks:
     - name: Install general tools and libraries
@@ -127,30 +125,3 @@
         state: restarted
         enabled: true
         daemon_reload: true
-
-    # TODO: Re-enable BAM once OpenTelemetry support is available
-    # - name: Download Buildkite Agent Metrics tool
-    #   register: install_metrics
-    #   remote_user: buildkite
-    #   ansible.builtin.get_url:
-    #     # TODO: Get architecture dynamically instead of hardcoding it
-    #     url: https://github.com/buildkite/buildkite-agent-metrics/releases/download/v{{ buildkite_agent_metrics_version }}/buildkite-agent-metrics-linux-arm64
-    #     dest: /home/buildkite/buildkite-agent/buildkite-agent-metrics
-    #     mode: "0700"
-
-    # - name: Configure Buildkite Agent Metrics systemd unit
-    #   register: configure_metrics_systemd_unit
-    #   remote_user: buildkite
-    #   ansible.builtin.template:
-    #     src: buildkite-agent-metrics.service.j2
-    #     dest: /home/buildkite/.config/systemd/user/buildkite-agent-metrics.service
-
-    # - name: Restart Buildkite Agent Metrics service
-    #   when: install_metrics.changed or copy_buildkite_agent_token.changed or configure_metrics_systemd_unit.changed
-    #   remote_user: buildkite
-    #   ansible.builtin.systemd:
-    #     name: buildkite-agent-metrics
-    #     scope: user
-    #     state: restarted
-    #     enabled: true
-    #     daemon_reload: true
