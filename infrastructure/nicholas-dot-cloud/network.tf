@@ -7,11 +7,14 @@ resource "digitalocean_firewall" "web" {
   name = "nicholas-dot-cloud"
   tags = [local.digitalocean_web_server_tag]
 
-  # Allow inbound HTTPS requests
+  # Allow inbound HTTPS requests from Cloudflare
   inbound_rule {
-    protocol         = "tcp"
-    port_range       = "443"
-    source_addresses = ["0.0.0.0/0", "::/0"]
+    protocol   = "tcp"
+    port_range = "443"
+    source_addresses = concat(
+      data.cloudflare_ip_ranges.cloudflare.ipv4_cidrs,
+      data.cloudflare_ip_ranges.cloudflare.ipv6_cidrs
+    )
   }
 
   # Allow inbound Tailscale requests
@@ -62,3 +65,5 @@ resource "digitalocean_firewall" "web" {
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 }
+
+data "cloudflare_ip_ranges" "cloudflare" {}
