@@ -1,6 +1,6 @@
 resource "aws_cloudformation_stack" "buildkite" {
   name         = "elastic-buildkite-stack"
-  template_url = "https://s3.amazonaws.com/buildkite-aws-stack/v6.35.0/aws-stack.yml"
+  template_url = "https://s3.amazonaws.com/buildkite-aws-stack/${data.github_release.elastic_ci_stack.release_tag}/aws-stack.yml"
   capabilities = ["CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]
   parameters = {
     # https://buildkite.com/docs/agent/v3/elastic-ci-aws/parameters
@@ -55,3 +55,8 @@ resource "aws_s3_object" "agent_environment" {
   EOF
 }
 
+data "github_release" "elastic_ci_stack" {
+  repository  = "elastic-ci-stack-for-aws"
+  owner       = "buildkite"
+  retrieve_by = "latest" # maybe this will bite me...
+}

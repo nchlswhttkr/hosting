@@ -1,7 +1,7 @@
 - name: Deploy Buildkite Uploader
   hosts: project_buildkite_uploader
   vars:
-    buildkite_agent_version: 3.96.0
+    buildkite_agent_version: 3.103.1
 
   pre_tasks:
     - name: Install general tools and libraries
