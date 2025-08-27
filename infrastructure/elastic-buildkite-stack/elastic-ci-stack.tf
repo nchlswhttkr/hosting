@@ -7,14 +7,14 @@ resource "aws_cloudformation_stack" "buildkite" {
     BuildkiteAgentTokenParameterStorePath = resource.aws_ssm_parameter.buildkite_agent_token.name
 
     # Auto-scaling EC2 instances
-    MaxSize            = 3
-    InstanceTypes      = "t3a.xlarge"
+    MaxSize            = 5
+    InstanceTypes      = "t3a.large"
     RootVolumeSize     = 20
     OnDemandPercentage = 0
     BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.agent_bootstrap_script.id}"
     AgentEnvFileUrl    = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.agent_environment_file.id}"
     ManagedPolicyARNs  = aws_iam_policy.buildkite_agent.arn
-    ScaleInIdlePeriod  = 300
+    ScaleInIdlePeriod  = 300 # seconds
 
     # Misc
     EnableCostAllocationTags = true
@@ -22,7 +22,6 @@ resource "aws_cloudformation_stack" "buildkite" {
     CostAllocationTagValue   = local.aws_tags["Project"]
 
     # Buildkite agent settings
-    AgentsPerInstance            = 4
     BuildkiteAgentExperiments    = "resolve-commit-after-checkout"
     BuildkiteAgentTracingBackend = "opentelemetry"
   }
