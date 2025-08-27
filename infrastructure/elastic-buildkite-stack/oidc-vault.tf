@@ -33,6 +33,10 @@ resource "vault_policy" "buildkite_agent" {
       capabilities = ["read"]
     }
 
+    path "${vault_mount.buildkite.path}/data/{{identity.entity.aliases.${vault_jwt_auth_backend.buildkite.accessor}.metadata.pipeline_slug}}/*" {
+      capabilities = ["read"]
+    }
+
     path "aws/sts/Terraform" {
       capabilities = ["read"]
     }
