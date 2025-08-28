@@ -78,32 +78,32 @@ data "vault_aws_access_credentials" "creds" {
 }
 
 provider "buildkite" {
-  api_token    = data.vault_kv_secret_v2.buildkite.data.api_token
-  organization = data.vault_kv_secret_v2.buildkite.data.organization
+  api_token    = data.vault_kv_secret_v2.buildkite.data["api-token"]
+  organization = data.vault_kv_secret_v2.buildkite.data["organization"]
 }
 
 data "vault_kv_secret_v2" "buildkite" {
   mount = "kv"
-  name  = "hosting/buildkite"
+  name  = "buildkite"
 }
 
 provider "github" {
-  token = data.vault_kv_secret_v2.github.data.access_token
+  token = data.vault_kv_secret_v2.github.data["access-token"]
 }
 
 data "vault_kv_secret_v2" "github" {
   mount = "kv"
-  name  = "nchlswhttkr/github"
+  name  = "github"
 }
 
 provider "tailscale" {
-  oauth_client_id     = data.vault_kv_secret_v2.tailscale.data.client_id
-  oauth_client_secret = data.vault_kv_secret_v2.tailscale.data.client_secret
+  oauth_client_id     = data.vault_kv_secret_v2.tailscale.data["client-id"]
+  oauth_client_secret = data.vault_kv_secret_v2.tailscale.data["client-secret"]
 }
 
 data "vault_kv_secret_v2" "tailscale" {
   mount = "kv"
-  name  = "nchlswhttkr/tailscale"
+  name  = "tailscale"
 }
 
 provider "vault" {}

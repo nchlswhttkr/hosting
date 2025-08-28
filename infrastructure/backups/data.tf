@@ -8,7 +8,7 @@ data "vault_aws_access_credentials" "creds" {
 
 data "vault_kv_secret_v2" "buildkite" {
   mount = "kv"
-  name  = "hosting/buildkite"
+  name  = "buildkite"
 }
 
 data "aws_ssm_parameter" "buildkite_oidc_provider_arn" {
