@@ -67,7 +67,7 @@
         url: https://api.buildkite.com/v2/organizations/nchlswhttkr/pipelines/website/builds
         method: POST
         headers:
-          Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/hosting/buildkite').data.data.api_token }}
+          Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/buildkite').data.data["api_token"] }}
         body_format: json
         body:
           commit: HEAD
@@ -85,4 +85,4 @@
       ansible.builtin.uri:
         url: "{{ trigger_buildkite_build.json.url }}"
         headers:
-          Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/hosting/buildkite').data.data.api_token }}
+          Authorization: Bearer {{ lookup('community.hashi_vault.vault_read', 'kv/data/buildkite').data.data["api_token"] }}

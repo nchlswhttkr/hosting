@@ -47,12 +47,12 @@ resource "aws_s3_object" "agent_environment_file" {
   key     = "env"
   content = <<-EOF
         BUILDKITE_TRACING_PROPAGATE_TRACEPARENT=true
-        OTEL_EXPORTER_OTLP_ENDPOINT="${data.vault_kv_secret_v2.project.data["honeycomb-endpoint"]}"
-        OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${data.vault_kv_secret_v2.project.data["honeycomb-ingest-api-key"]}"
+        OTEL_EXPORTER_OTLP_ENDPOINT="${data.vault_kv_secret_v2.honeycomb.data["endpoint"]}"
+        OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${data.vault_kv_secret_v2.honeycomb.data["ingest-api-key"]}"
     EOF
 }
 
-data "vault_kv_secret_v2" "project" {
+data "vault_kv_secret_v2" "honeycomb" {
   mount = "kv"
-  name  = "hosting/elastic-buildkite-stack"
+  name  = "honeycomb-buildkite"
 }
