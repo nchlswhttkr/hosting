@@ -73,7 +73,7 @@
   when: not check_tls_certificates.stat.exists
   ansible.builtin.shell: certbot certonly --domain {{ nginx_hostname }}
 
-- name: Test Nginx confiiguration
+- name: Test Nginx configuration
   when: provision_tls_certificates.changed or configure_nginx.changed or configure_host.changed
   become: true
   ansible.builtin.shell: nginx -t
