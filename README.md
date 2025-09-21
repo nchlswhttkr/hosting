@@ -40,13 +40,13 @@ config:
 ---
 
 graph BT
-    backups --> terraform-backend
-    backups --> vault
-    elastic-buildkite-stack --> terraform-backend
-    elastic-buildkite-stack --> vault
-    nicholas-dot-cloud --> terraform-backend
-    terraform-backend
-    vault --> terraform-backend
+  backups --> terraform-backend
+  backups --> vault
+  elastic-buildkite-stack --> terraform-backend
+  elastic-buildkite-stack --> vault
+  nicholas-dot-cloud --> terraform-backend
+  terraform-backend
+  vault --> terraform-backend
 ```
 
 ## Self-hosted Deployments
