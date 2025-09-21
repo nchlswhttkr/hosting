@@ -36,10 +36,9 @@ Be mindful that there are some dependencies between Terraform projects (namely t
 ---
 config:
   look: handDrawn
-  layout: elk
 ---
 
-graph BT
+flowchart-elk BT
   backups --> terraform-backend
   backups --> vault
   elastic-buildkite-stack --> terraform-backend
