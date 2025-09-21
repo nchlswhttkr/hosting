@@ -6,10 +6,9 @@ Infrastructure, playbooks and configuration for self-hosted services I run.
 
 I automate some maintenance tasks with Buildkite.
 
-| Pipeline                                                                                                                                                                                     | Description                          |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| [![Build status](https://badge.buildkite.com/c4820c1695baf489be6ca1eb3104096ac289c88602b1d91ac3.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-vault) `backup-vault`             | Backs up my Hashicorp Vault instance |
-| [![Build status](https://badge.buildkite.com/1bebec299d9b84c6a43454cde22281d93a55370ce2a47d8dd7.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-writefreely) `backup-writefreely` | Backs up my Writefreely instance     |
+| Pipeline                                                                                                                                                                         | Description                          |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| [![Build status](https://badge.buildkite.com/c4820c1695baf489be6ca1eb3104096ac289c88602b1d91ac3.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-vault) `backup-vault` | Backs up my Hashicorp Vault instance |
 
 ## Infrastructure
 
@@ -31,7 +30,24 @@ Each project is deployed by its own `Makefile`.
 make -C infrastructure/terraform-backend
 ```
 
-<!-- TODO: Graph dependencies of Terraform base infrastructure (Vault, Backups) and embed via https://excalidraw.com/ -->
+Be mindful that there are some dependencies between Terraform projects (namely the `terraform-backend`).
+
+```mermaid
+---
+config:
+  look: handDrawn
+  layout: elk
+---
+
+graph BT
+    backups --> terraform-backend
+    backups --> vault
+    elastic-buildkite-stack --> terraform-backend
+    elastic-buildkite-stack --> vault
+    nicholas-dot-cloud --> terraform-backend
+    terraform-backend
+    vault --> terraform-backend
+```
 
 ## Self-hosted Deployments
 
@@ -45,13 +61,6 @@ make -C deploy
 make -C deploy/blog
 make -C deploy/buildkite-uploader
 make -C deploy/vault
-make -C deploy/writefreely
-```
-
-Some projects include subcommands.
-
-```sh
-make -C deploy/writefreely backup
 ```
 
 ### Setting up new hosts
