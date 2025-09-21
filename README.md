@@ -6,9 +6,7 @@ Infrastructure, playbooks and configuration for self-hosted services I run.
 
 I automate some maintenance tasks with Buildkite.
 
-| Pipeline                                                                                                                                                                         | Description                          |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| [![Build status](https://badge.buildkite.com/c4820c1695baf489be6ca1eb3104096ac289c88602b1d91ac3.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-vault) `backup-vault` | Backs up my Hashicorp Vault instance |
+- [![Build status](https://badge.buildkite.com/c4820c1695baf489be6ca1eb3104096ac289c88602b1d91ac3.svg?branch=main)](https://buildkite.com/nchlswhttkr/backup-vault) `backup-vault` - Backs up my Hashicorp Vault instance
 
 ## Infrastructure
 
