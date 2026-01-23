@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.8.2"
+  required_version = "~> 1.8"
 
   required_providers {
     aws = {
@@ -10,6 +10,11 @@ terraform {
     pass = {
       source  = "nicholas.cloud/nchlswhttkr/pass"
       version = ">= 0.1"
+    }
+
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 3.10"
     }
   }
 

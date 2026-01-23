@@ -27,3 +27,27 @@ resource "aws_s3_bucket_lifecycle_configuration" "state" {
     }
   }
 }
+
+resource "aws_dynamodb_table" "state_lock" {
+  name           = "nchlswhttkr-terraform-backend"
+  read_capacity  = 1
+  write_capacity = 1
+  hash_key       = "LockID"
+
+  attribute {
+    name = "LockID"
+    type = "S"
+  }
+}
+
+resource "aws_ssm_parameter" "state_bucket_arn" {
+  name  = "/terraform-backend/state-bucket-arn"
+  type  = "String"
+  value = aws_s3_bucket.state.arn
+}
+
+resource "aws_ssm_parameter" "state_lock_table_arn" {
+  name  = "/terraform-backend/state-lock-table-arn"
+  type  = "String"
+  value = aws_dynamodb_table.state_lock.arn
+}

@@ -42,8 +42,7 @@ flowchart-elk BT
   elastic-buildkite-stack --> terraform-backend
   elastic-buildkite-stack --> vault
   nicholas-dot-cloud --> terraform-backend
-  terraform-backend
-  vault --> terraform-backend
+  terraform-backend --> vault
 ```
 
 ## Self-hosted Deployments
