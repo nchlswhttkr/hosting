@@ -13,11 +13,8 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket         = "nchlswhttkr-terraform-backend"
-    dynamodb_table = "nchlswhttkr-terraform-backend"
-    key            = "vault"
-    region         = "ap-southeast-4"
+  backend "local" {
+    path = "/Users/nchlswhttkr/My Drive/nicholas.cloud/vault.tfstate"
   }
 }
 
