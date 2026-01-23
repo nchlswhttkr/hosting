@@ -12,13 +12,12 @@ I automate some maintenance tasks with Buildkite.
 
 I have a number of Terraform projects that don't belong to any particular project repositories, so I keep them here.
 
-| Project                   | Description                                                                  |
-| ------------------------- | ---------------------------------------------------------------------------- |
-| `backups`                 | Automating backups of my self-hosted services                                |
-| `elastic-buildkite-stack` | Autoscaling Buildkite agents, plus secrets needed by my Buildkite pipelines  |
-| `nicholas-dot-cloud`      | Infrastructure related to my personal website                                |
-| `terraform-backend`       | An AWS backend for all my other Terraform projects to use                    |
-| `vault`                   | Backend and policy configuration for my self-hosted Hashicorp Vault instance |
+| Project                   | Description                                                                 |
+| ------------------------- | --------------------------------------------------------------------------- |
+| `backups`                 | Automating backups of my self-hosted services                               |
+| `elastic-buildkite-stack` | Autoscaling Buildkite agents, plus secrets needed by my Buildkite pipelines |
+| `nicholas-dot-cloud`      | Infrastructure related to my personal website                               |
+| `terraform-backend`       | An AWS backend for all my other Terraform projects to use                   |
 
 <!-- https://github.com/nchlswhttkr/hosting/tree/9c2a80cc908db6f109b2ed3269e022d77eb3b736/infrastructure/nicholas-dot-cloud-preview -->
 
@@ -38,11 +37,8 @@ config:
 
 flowchart-elk BT
   backups --> terraform-backend
-  backups --> vault
   elastic-buildkite-stack --> terraform-backend
-  elastic-buildkite-stack --> vault
   nicholas-dot-cloud --> terraform-backend
-  terraform-backend --> vault
 ```
 
 ## Self-hosted Deployments
