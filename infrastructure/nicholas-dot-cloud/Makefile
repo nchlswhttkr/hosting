@@ -1,7 +1,7 @@
 .PHONY: *
 
-export AWS_ACCESS_KEY_ID=$(shell pass show aws/admin-access-key)
-export AWS_SECRET_ACCESS_KEY=$(shell pass show aws/admin-secret-key)
+export AWS_ACCESS_KEY_ID=$(shell pass show aws/terraform-backend-access-key)
+export AWS_SECRET_ACCESS_KEY=$(shell pass show aws/terraform-backend-secret-key)
 export VAULT_TOKEN=$(shell pass show vault/root-token)
 
 apply: init
