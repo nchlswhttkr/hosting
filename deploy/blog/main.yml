@@ -19,14 +19,12 @@
         name: "*"
         state: latest
 
-    - name: Create local user
-      become: true
-      register: create_user
-      ansible.builtin.user:
-        name: blog
-        shell: /bin/bash
-
   roles:
+    - role: ../roles/service-user
+      become: true
+      vars:
+        service_name: blog
+
     - role: ../roles/nginx
       become: true
       vars:

@@ -13,18 +13,6 @@
           - jq
         state: latest
 
-    - name: Install D-Bus systemd user integration
-      register: install_dbus_user_session
-      become: true
-      ansible.builtin.apt:
-        name: dbus-user-session
-        state: latest
-
-    - name: Reboot if D-Bus systemd user integration was installed
-      when: install_dbus_user_session.changed
-      become: true
-      ansible.builtin.reboot: ~
-
     - name: Keep system packages up to date
       become: true
       ansible.builtin.apt:
@@ -33,17 +21,11 @@
         name: "*"
         state: latest
 
-    - name: Create Buildkite user
+  roles:
+    - role: ../roles/service-user
       become: true
-      register: create_user
-      ansible.builtin.user:
-        name: buildkite
-        shell: /bin/bash
-
-    - name: Enable linger for Buildkite user
-      become: true
-      when: create_user.changed
-      ansible.builtin.shell: loginctl enable-linger buildkite
+      vars:
+        service_name: buildkite
 
   tasks:
     - name: Ensure required directories exists

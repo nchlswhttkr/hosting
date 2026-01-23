@@ -1,0 +1,23 @@
+- name: Install D-Bus systemd user integration
+  register: install_dbus_user_session
+  become: true
+  ansible.builtin.apt:
+    name: dbus-user-session
+    state: latest
+
+- name: Reboot if D-Bus systemd user integration was installed
+  when: install_dbus_user_session.changed
+  become: true
+  ansible.builtin.reboot: ~
+
+- name: Create Vault user
+  become: true
+  register: create_user
+  ansible.builtin.user:
+    name: "{{ service_name }}"
+    shell: /bin/bash
+
+- name: Enable linger for Vault user
+  become: true
+  when: create_user.changed
+  ansible.builtin.shell: loginctl enable-linger {{ service_name }}
