@@ -17,17 +17,17 @@ I have a number of Terraform projects that don't belong to any particular projec
 | `backups`                 | Automating backups of my self-hosted services                               |
 | `elastic-buildkite-stack` | Autoscaling Buildkite agents, plus secrets needed by my Buildkite pipelines |
 | `nicholas-dot-cloud`      | Infrastructure related to my personal website                               |
-| `terraform-backend`       | An AWS backend for all my other Terraform projects to use                   |
+| `terraform-foundations`   | Foundations my other Terraform projects rely on (backend, AWS roles)        |
 
 <!-- https://github.com/nchlswhttkr/hosting/tree/9c2a80cc908db6f109b2ed3269e022d77eb3b736/infrastructure/nicholas-dot-cloud-preview -->
 
 Each project is deployed by its own `Makefile`.
 
 ```sh
-make -C infrastructure/terraform-backend
+make -C infrastructure/terraform-foundations
 ```
 
-Be mindful that there are some dependencies between Terraform projects (namely the `terraform-backend`).
+Be mindful that there are some dependencies between Terraform projects (namely the `terraform-foundations`).
 
 ```mermaid
 ---
@@ -36,9 +36,9 @@ config:
 ---
 
 flowchart-elk BT
-  backups --> terraform-backend
-  elastic-buildkite-stack --> terraform-backend
-  nicholas-dot-cloud --> terraform-backend
+  backups --> terraform-foundations
+  elastic-buildkite-stack --> terraform-foundations
+  nicholas-dot-cloud --> terraform-foundations
 ```
 
 ## Self-hosted Deployments

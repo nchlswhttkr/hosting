@@ -19,7 +19,7 @@ terraform {
   }
 
   backend "local" {
-    path = "/Users/nchlswhttkr/My Drive/nicholas.cloud/terraform-backend.tfstate"
+    path = "/Users/nchlswhttkr/My Drive/nicholas.cloud/terraform-foundations.tfstate"
   }
 }
 
@@ -27,7 +27,7 @@ provider "aws" {
   region = "ap-southeast-4"
   default_tags {
     tags = {
-      Project = "Terraform Backend"
+      Project = "Terraform Foundations"
     }
   }
 }
