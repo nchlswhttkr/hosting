@@ -5,7 +5,7 @@ resource "buildkite_pipeline" "service" {
   repository     = "git@github.com:nchlswhttkr/hosting.git"
   default_branch = "main"
 
-  provider_settings {
+  provider_settings = {
     trigger_mode = "none"
   }
 

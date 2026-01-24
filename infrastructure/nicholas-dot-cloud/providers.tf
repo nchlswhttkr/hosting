@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.8"
+  required_version = "~> 1.11"
 
   required_providers {
     cloudflare = {
@@ -14,7 +14,7 @@ terraform {
 
     github = {
       source  = "integrations/github"
-      version = "~> 4.13"
+      version = "~> 6.10"
     }
 
     http = {
@@ -44,7 +44,7 @@ terraform {
 
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.10"
+      version = "~> 5.6"
     }
   }
 
@@ -83,11 +83,11 @@ data "pass_password" "github_secret_token" {
 provider "pass" {}
 
 provider "tailscale" {
-  oauth_client_id     = data.vault_kv_secret_v2.tailscale.data["client-id"]
-  oauth_client_secret = data.vault_kv_secret_v2.tailscale.data["client-secret"]
+  oauth_client_id     = ephemeral.vault_kv_secret_v2.tailscale.data["client-id"]
+  oauth_client_secret = ephemeral.vault_kv_secret_v2.tailscale.data["client-secret"]
 }
 
-data "vault_kv_secret_v2" "tailscale" {
+ephemeral "vault_kv_secret_v2" "tailscale" {
   mount = "kv"
   name  = "tailscale"
 }

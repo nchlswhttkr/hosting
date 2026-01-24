@@ -52,6 +52,7 @@ resource "aws_s3_object" "agent_environment_file" {
     EOF
 }
 
+# TODO: Migrate to Honeycomb provider
 data "vault_kv_secret_v2" "honeycomb" {
   mount = "kv"
   name  = "honeycomb-buildkite"

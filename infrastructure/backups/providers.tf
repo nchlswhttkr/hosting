@@ -4,17 +4,17 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.0"
+      version = "~> 6.28"
     }
 
     buildkite = {
       source  = "buildkite/buildkite"
-      version = "~> 0.19"
+      version = "~> 1.29"
     }
 
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.10"
+      version = "~> 5.6"
     }
   }
 
@@ -32,15 +32,13 @@ provider "aws" {
   secret_key = data.vault_aws_access_credentials.creds.secret_key
   token      = data.vault_aws_access_credentials.creds.security_token
   default_tags {
-    tags = {
-      Project = "Backups"
-    }
+    tags = local.aws_tags
   }
 }
 
 provider "buildkite" {
-  api_token    = data.vault_kv_secret_v2.buildkite.data["api-token"]
-  organization = data.vault_kv_secret_v2.buildkite.data["organization"]
+  api_token    = ephemeral.vault_kv_secret_v2.buildkite.data["api-token"]
+  organization = local.buildkite_organization
 }
 
 provider "vault" {}

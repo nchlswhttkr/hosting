@@ -24,6 +24,8 @@ resource "aws_cloudformation_stack" "buildkite" {
     # Buildkite agent settings
     BuildkiteAgentExperiments    = "resolve-commit-after-checkout"
     BuildkiteAgentTracingBackend = "opentelemetry"
+
+    # TODO: Migrate to dedicated cluster
   }
 }
 

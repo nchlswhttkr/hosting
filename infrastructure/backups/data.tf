@@ -6,7 +6,7 @@ data "vault_aws_access_credentials" "creds" {
   type    = "sts"
 }
 
-data "vault_kv_secret_v2" "buildkite" {
+ephemeral "vault_kv_secret_v2" "buildkite" {
   mount = "kv"
   name  = "buildkite"
 }

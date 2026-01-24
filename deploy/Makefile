@@ -2,6 +2,8 @@
 
 venv := . .venv/bin/activate
 
+# TODO: Migrate to UV
+
 install:
 	@python3 -m venv .venv
 	@$(venv) && python -m pip install --requirement requirements.txt

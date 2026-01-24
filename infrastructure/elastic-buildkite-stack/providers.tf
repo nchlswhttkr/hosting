@@ -1,13 +1,15 @@
 terraform {
+  required_version = "~> 1.11"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.59"
+      version = "~> 6.28"
     }
 
     buildkite = {
       source  = "buildkite/buildkite"
-      version = "~> 0.19"
+      version = "~> 1.29"
     }
 
     github = {
@@ -32,7 +34,7 @@ terraform {
 
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.10"
+      version = "~> 5.6"
     }
   }
 
@@ -41,12 +43,6 @@ terraform {
     dynamodb_table = "nchlswhttkr-terraform-backend"
     key            = "elastic-buildkite-stack"
     region         = "ap-southeast-4"
-  }
-}
-
-locals {
-  aws_tags = {
-    Project = "Elastic Buildkite Stack"
   }
 }
 
@@ -78,30 +74,30 @@ data "vault_aws_access_credentials" "creds" {
 }
 
 provider "buildkite" {
-  api_token    = data.vault_kv_secret_v2.buildkite.data["api-token"]
-  organization = data.vault_kv_secret_v2.buildkite.data["organization"]
+  api_token    = ephemeral.vault_kv_secret_v2.buildkite.data["api-token"]
+  organization = local.buildkite_organization
 }
 
-data "vault_kv_secret_v2" "buildkite" {
+ephemeral "vault_kv_secret_v2" "buildkite" {
   mount = "kv"
   name  = "buildkite"
 }
 
 provider "github" {
-  token = data.vault_kv_secret_v2.github.data["access-token"]
+  token = ephemeral.vault_kv_secret_v2.github.data["access-token"]
 }
 
-data "vault_kv_secret_v2" "github" {
+ephemeral "vault_kv_secret_v2" "github" {
   mount = "kv"
   name  = "github"
 }
 
 provider "tailscale" {
-  oauth_client_id     = data.vault_kv_secret_v2.tailscale.data["client-id"]
-  oauth_client_secret = data.vault_kv_secret_v2.tailscale.data["client-secret"]
+  oauth_client_id     = ephemeral.vault_kv_secret_v2.tailscale.data["client-id"]
+  oauth_client_secret = ephemeral.vault_kv_secret_v2.tailscale.data["client-secret"]
 }
 
-data "vault_kv_secret_v2" "tailscale" {
+ephemeral "vault_kv_secret_v2" "tailscale" {
   mount = "kv"
   name  = "tailscale"
 }

@@ -1,4 +1,10 @@
 locals {
+  aws_tags = {
+    Project = "Backups"
+  }
+
+  buildkite_organization = "nchlswhttkr"
+
   services = {
     vault = {
       name     = "Hashicorp Vault",

@@ -17,10 +17,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "backups" {
     id     = "default"
     status = "Enabled"
 
-    filter {}
-
     transition {
       storage_class = "INTELLIGENT_TIERING"
+      days          = 0
     }
 
   }
