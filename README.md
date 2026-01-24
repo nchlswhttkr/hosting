@@ -10,6 +10,8 @@ I automate some maintenance tasks with Buildkite.
 
 ## Infrastructure
 
+<!-- TODO: Upgrade Terraform dependencies -->
+
 I have a number of Terraform projects that don't belong to any particular project repositories, so I keep them here.
 
 | Project                   | Description                                                                 |
@@ -53,7 +55,6 @@ make -C deploy
 
 make -C deploy/blog
 make -C deploy/buildkite-uploader
-make -C deploy/freshrss
 make -C deploy/vault
 ```
 
