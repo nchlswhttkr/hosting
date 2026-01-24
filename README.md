@@ -14,10 +14,11 @@ I have a number of Terraform projects that don't belong to any particular projec
 
 | Project                   | Description                                                                 |
 | ------------------------- | --------------------------------------------------------------------------- |
+| `terraform-foundations`   | Foundations my other Terraform projects rely on (backend, AWS roles)        |
+|                           |                                                                             |
 | `backups`                 | Automating backups of my self-hosted services                               |
 | `elastic-buildkite-stack` | Autoscaling Buildkite agents, plus secrets needed by my Buildkite pipelines |
 | `nicholas-dot-cloud`      | Infrastructure related to my personal website                               |
-| `terraform-foundations`   | Foundations my other Terraform projects rely on (backend, AWS roles)        |
 
 <!-- https://github.com/nchlswhttkr/hosting/tree/9c2a80cc908db6f109b2ed3269e022d77eb3b736/infrastructure/nicholas-dot-cloud-preview -->
 
@@ -27,7 +28,7 @@ Each project is deployed by its own `Makefile`.
 make -C infrastructure/terraform-foundations
 ```
 
-Be mindful that there are some dependencies between Terraform projects (namely the `terraform-foundations`).
+Be mindful that there are dependencies between Terraform projects (namely on `terraform-foundations`).
 
 ```mermaid
 ---
@@ -52,6 +53,7 @@ make -C deploy
 
 make -C deploy/blog
 make -C deploy/buildkite-uploader
+make -C deploy/freshrss
 make -C deploy/vault
 ```
 

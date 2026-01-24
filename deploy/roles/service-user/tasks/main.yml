@@ -10,14 +10,14 @@
   become: true
   ansible.builtin.reboot: ~
 
-- name: Create Vault user
+- name: Create service user
   become: true
   register: create_user
   ansible.builtin.user:
     name: "{{ service_name }}"
     shell: /bin/bash
 
-- name: Enable linger for Vault user
+- name: Enable linger for service user
   become: true
   when: create_user.changed
   ansible.builtin.shell: loginctl enable-linger {{ service_name }}

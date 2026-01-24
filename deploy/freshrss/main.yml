@@ -1,0 +1,100 @@
+- name: Deploy FreshRSS (https://freshrss.nicholas.cloud/)
+  hosts: project_freshrss
+  vars:
+    freshrss_version: "1.27.0"
+
+  pre_tasks:
+    - name: Install general tools and libraries
+      become: true
+      ansible.builtin.apt:
+        name:
+          - build-essential
+          - git
+          - jq
+        state: latest
+
+    - name: Keep system packages up to date
+      become: true
+      ansible.builtin.apt:
+        autoremove: true
+        update_cache: true
+        name: "*"
+        state: latest
+
+  roles:
+    - role: ../roles/service-user
+      become: true
+      vars:
+        service_name: freshrss
+
+    - role: ../roles/nginx
+      become: true
+      vars:
+        nginx_hostname: freshrss.nicholas.cloud
+
+  tasks:
+    - name: Get PHP signing key
+      become: true
+      ansible.builtin.get_url:
+        url: https://packages.sury.org/php/apt.gpg
+        dest: /etc/apt/keyrings/suryphp.gpg
+        force: true
+
+    - name: Add PHP package repository
+      become: true
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/suryphp.gpg] https://packages.sury.org/php/ {{ ansible_facts['lsb']['codename'] }} main"
+
+    - name: Install PHP and SQLite
+      become: true
+      ansible.builtin.apt:
+        name:
+          # https://freshrss.github.io/FreshRSS/en/admins/02_Prerequisites.html
+          - php8.4
+          - php8.4-common
+          - php8.4-ctype
+          - php8.4-curl
+          - php8.4-fpm
+          - php8.4-iconv
+          - php8.4-intl
+          - php8.4-mbstring
+          - php8.4-opcache
+          - php8.4-sqlite3
+          - php8.4-xml
+          - php8.4-zip
+          - sqlite3
+        state: latest
+
+    - name: Ensure hosting directory exists
+      become: true
+      ansible.builtin.file:
+        path: /var/www/freshrss.nicholas.cloud
+        state: directory
+        owner: www-data
+        group: www-data
+
+    - name: Clone FreshRSS repository
+      when: ansible_local.freshrss.versions.freshrss_version|d != freshrss_version
+      register: install_freshrss
+      remote_user: freshrss
+      ansible.builtin.git:
+        repo: https://github.com/FreshRSS/FreshRSS.git
+        dest: /home/freshrss/freshrss
+        version: "{{ freshrss_version }}"
+
+    - name: Symlink /p/ directory to hosting directory
+      when: install_freshrss.changed
+      become: true
+      ansible.builtin.file:
+        src: /home/freshrss/freshrss/p
+        dest: /var/www/freshrss.nicholas.cloud/p
+        state: link
+        owner: www-data
+        group: www-data
+
+    - name: Set permissions on FreshRSS files
+      when: install_freshrss.changed
+      become: true
+      ansible.builtin.shell: cli/access-permissions.sh
+      args:
+        chdir: /home/freshrss/freshrss
