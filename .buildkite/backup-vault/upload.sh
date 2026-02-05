@@ -27,3 +27,19 @@ echo "--- Uploading backup to S3"
 export AWS_REGION="ap-southeast-4"
 BACKUP_BUCKET_NAME="$(aws ssm get-parameter --name "/backups/backups-bucket-name" | jq --raw-output ".Parameter.Value")"
 aws s3 cp vault-*.snap "s3://${BACKUP_BUCKET_NAME}/vault/"
+
+echo "--- Recording successful uploads"
+BUILDKITE_ANNOTATION="$(mktemp)"
+cat <<-EOF >> "$BUILDKITE_ANNOTATION"
+    Vault backups uploaded to S3.
+
+    | Backup | Console URL |
+    | ------ | ----------- |
+EOF
+
+for BACKUP in vault-*.snap; do
+    URL_SAFE_BACKUP="$(echo "$BACKUP" | sed "s/:/%3A/g" -)"
+    echo "| \`$BACKUP\` | https://$AWS_REGION.console.aws.amazon.com/s3/object/$BACKUP_BUCKET_NAME?prefix=$URL_SAFE_BACKUP |" >> "$BUILDKITE_ANNOTATION"
+done
+
+buildkite-agent annotate --style "success" < "$BUILDKITE_ANNOTATION"

@@ -1,7 +1,7 @@
 - name: Deploy Vault (https://vault.nicholas.cloud/)
   hosts: project_vault
   vars:
-    vault_version: "1.14.0"
+    vault_version: "1.21.1"
 
   pre_tasks:
     - name: Install general tools and libraries

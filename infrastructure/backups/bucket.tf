@@ -13,6 +13,9 @@ resource "aws_s3_bucket_versioning" "backups" {
 resource "aws_s3_bucket_lifecycle_configuration" "backups" {
   bucket = aws_s3_bucket.backups.id
 
+  # TODO: Enforce object locking w/ governance mode
+  # https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html
+
   rule {
     id     = "default"
     status = "Enabled"
