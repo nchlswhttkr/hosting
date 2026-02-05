@@ -11,9 +11,8 @@ resource "aws_cloudformation_stack" "buildkite" {
     InstanceTypes      = "t3a.large"
     RootVolumeSize     = 20
     OnDemandPercentage = 0
-    BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.agent_bootstrap_script.id}"
-    AgentEnvFileUrl    = "s3://${aws_s3_bucket.bootstrap.bucket}/${aws_s3_object.agent_environment_file.id}"
-    ManagedPolicyARNs  = aws_iam_policy.buildkite_agent.arn
+    BootstrapScriptUrl = "s3://${aws_s3_bucket.bootstrap.bucket}/${local.bootstrap_script_name}"
+    AgentEnvFileUrl    = "s3://${aws_s3_bucket.bootstrap.bucket}/${local.environment_file_name}"
     ScaleInIdlePeriod  = 300 # seconds
 
     # Misc
@@ -39,6 +38,7 @@ resource "aws_ssm_parameter" "buildkite_agent_token" {
   value = buildkite_agent_token.elastic.token
 }
 
+# TODO: Move this to static file
 resource "aws_s3_object" "agent_environment" {
   bucket                 = aws_cloudformation_stack.buildkite.outputs.ManagedSecretsBucket
   key                    = "environment"

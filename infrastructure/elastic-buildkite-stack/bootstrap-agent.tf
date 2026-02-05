@@ -4,7 +4,7 @@ resource "aws_s3_bucket" "bootstrap" {
 
 resource "aws_s3_object" "agent_bootstrap_script" {
   bucket  = aws_s3_bucket.bootstrap.bucket
-  key     = "bootstrap.sh"
+  key     = local.bootstrap_script_name
   content = <<-EOF
         #!/bin/bash
         set -euo pipefail
@@ -16,35 +16,37 @@ resource "aws_s3_object" "agent_bootstrap_script" {
         sudo dnf -y config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
         sudo dnf -y install terraform vault
 
-        TAILSCALE_AUTHENTICATION_KEY=$(aws ssm get-parameter --with-decryption --name "${aws_ssm_parameter.tailscale_authentication_key.name}" | jq --raw-output ".Parameter.Value")
-        sudo tailscale up --authkey "$TAILSCALE_AUTHENTICATION_KEY" --hostname "buildkite"
+        # TODO: Remove this once stack supports AWS CLI >2.32.0
+        # https://github.com/buildkite/elastic-ci-stack-for-aws/blob/HEAD/packer/linux/base/scripts/versions.sh#L6
+        curl -sSfL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.33.3.zip" -o "awscliv2.zip"
+        unzip -qq awscliv2.zip
+        sudo ./aws/install --update
+
+        TAILSCALE_CLIENT_ID="$(aws ssm get-parameter --name "${aws_ssm_parameter.tailscale_client_id.name}" --query "Parameter.Value" --output "text")"
+        AWS_IDENTITY_TOKEN="$(aws sts get-web-identity-token --audience "api.tailscale.com/$TAILSCALE_CLIENT_ID" --signing-algorithm "ES384" --query "WebIdentityToken" --output "text")"
+        sudo tailscale up --client-id "$TAILSCALE_CLIENT_ID" --id-token "$AWS_IDENTITY_TOKEN" --hostname "buildkite" --advertise-tags "tag:buildkite"
     EOF
 }
 
-resource "aws_ssm_parameter" "tailscale_authentication_key" {
-  name  = "/elastic-buildkite-stack/tailscale-authentication-key"
-  type  = "SecureString"
-  value = tailscale_tailnet_key.buildkite.key
+resource "aws_ssm_parameter" "tailscale_client_id" {
+  name  = "/elastic-buildkite-stack/tailscale-client-id"
+  type  = "String"
+  value = tailscale_federated_identity.aws.id
 }
 
-resource "tailscale_tailnet_key" "buildkite" {
-  ephemeral = true
-  reusable  = true
-  tags      = ["tag:buildkite"]
-
-  # Since time_rotating marks itself as deleted, can't use replace_triggered_by https://github.com/hashicorp/terraform-provider-time/issues/118
-  # Instead, include it in the description here to force recreation when rotation occurs
-  description = "Buildkite Agents ${time_rotating.tailscale_rotation.unix}"
+resource "tailscale_federated_identity" "aws" {
+  description = "Elastic Buildkite Stack"
+  scopes      = ["auth_keys"]
+  tags        = ["tag:auto"]
+  issuer      = local.aws_outbound_identity_federation_issuer_url
+  subject     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${aws_cloudformation_stack.buildkite.outputs["InstanceRoleName"]}"
 }
 
-# Force rotation of authentication key if older than a few weeks
-resource "time_rotating" "tailscale_rotation" {
-  rotation_days = 21
-}
+data "aws_caller_identity" "current" {}
 
 resource "aws_s3_object" "agent_environment_file" {
   bucket  = aws_s3_bucket.bootstrap.bucket
-  key     = "env"
+  key     = local.environment_file_name
   content = <<-EOF
         BUILDKITE_TRACING_PROPAGATE_TRACEPARENT=true
         OTEL_EXPORTER_OTLP_ENDPOINT="${data.vault_kv_secret_v2.honeycomb.data["endpoint"]}"

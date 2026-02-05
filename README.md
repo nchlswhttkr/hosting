@@ -11,6 +11,8 @@ I automate some maintenance tasks with Buildkite.
 ## Infrastructure
 
 <!-- TODO: Upgrade Terraform dependencies -->
+<!-- TODO: Set up Terraform variables -->
+<!-- TODO: Add startup protection for AWS EC2 in Buildkite stack -->
 
 I have a number of Terraform projects that don't belong to any particular project repositories, so I keep them here.
 

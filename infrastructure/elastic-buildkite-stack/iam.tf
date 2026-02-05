@@ -14,25 +14,18 @@ data "aws_iam_policy_document" "buildkite_agent" {
   }
 
   statement {
-    sid = "ReadTailscaleAuthenticationKey"
+    sid = "ReadTailscaleClientId"
     actions = [
       "ssm:GetParameter"
     ]
-    resources = [aws_ssm_parameter.tailscale_authentication_key.arn]
+    resources = [aws_ssm_parameter.tailscale_client_id.arn]
   }
 
   statement {
-    sid = "DecryptSecretParameters"
+    sid = "AssumeRoleAndExternalIdentity"
     actions = [
-      "kms:Decrypt"
-    ]
-    resources = [data.aws_kms_key.ssm_default.arn]
-  }
-
-  statement {
-    sid = "AssumeRole"
-    actions = [
-      "sts:AssumeRoleWithWebIdentity"
+      "sts:AssumeRoleWithWebIdentity",
+      "sts:GetWebIdentityToken"
     ]
     resources = [
       "*" # For now we don't know the potential roles an agent might assume, it would be nice to attach policies CloudFormation stack's EC2 role but I don't want to touch "internals"
@@ -40,6 +33,7 @@ data "aws_iam_policy_document" "buildkite_agent" {
   }
 }
 
-data "aws_kms_key" "ssm_default" {
-  key_id = "alias/aws/ssm"
+resource "aws_iam_role_policy_attachment" "buildkite_agent" {
+  role       = aws_cloudformation_stack.buildkite.outputs["InstanceRoleName"]
+  policy_arn = aws_iam_policy.buildkite_agent.arn
 }
