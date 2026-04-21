@@ -2,12 +2,14 @@
 
 venv := . .venv/bin/activate
 
-# TODO: Migrate to UV
-
-install:
-	@python3 -m venv .venv
-	@$(venv) && python -m pip install --requirement requirements.txt
-	@$(venv) && ansible-galaxy collection install --requirement ansible-requirements.yml
+init:
+	@uv sync
 
 inventory:
-	@$(venv) && python3 inventory.py --list
+	@uv run inventory.py --list
+
+upgrade:
+	@uv sync --upgrade
+
+clean:
+	rm -rf .venv

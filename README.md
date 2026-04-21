@@ -46,15 +46,13 @@ flowchart-elk BT
   nicholas-dot-cloud --> terraform-foundations
 ```
 
-## Self-hosted Deployments
+## Self-hosted software and services
 
 I self-host a number of personal projects and services, and predominantly manage these with Ansible.
 
-Once again each project has its own `Makefile`, but there a little bit of general setup required for Ansible too.
+Once again each project has its own `Makefile`.
 
 ```sh
-make -C deploy
-
 make -C deploy/blog
 make -C deploy/buildkite-uploader
 make -C deploy/vault

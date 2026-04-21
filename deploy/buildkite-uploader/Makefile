@@ -1,7 +1,5 @@
 .PHONY: *
 
-venv := . ../.venv/bin/activate
-
 export ANSIBLE_CONFIG=../ansible.cfg
 export VAULT_TOKEN?=$(shell pass show vault/root-token)
 
@@ -9,4 +7,4 @@ export VAULT_TOKEN?=$(shell pass show vault/root-token)
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 main:
-	@$(venv) && ansible-playbook --inventory ../inventory.py main.yml
+	@uv run ansible-playbook --inventory ../inventory.py main.yml

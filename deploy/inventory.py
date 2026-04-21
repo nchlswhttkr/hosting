@@ -9,11 +9,12 @@ if "--list" not in sys.argv:
     print("{}")
     sys.exit(0)
 
-TAILSCALE_BINARY = (
-    "tailscale"
-    if platform.system() != "Darwin"
-    else "/Applications/Tailscale.app/Contents/MacOS/Tailscale"
-)
+match platform.system():
+    case "Darwin":
+        TAILSCALE_BINARY = "/Applications/Tailscale.app/Contents/MacOS/Tailscale"
+    case _:
+        TAILSCALE_BINARY = "tailscale"
+
 tailscale_status_process = subprocess.run(
     [TAILSCALE_BINARY, "status", "--json"], capture_output=True, check=True
 )
