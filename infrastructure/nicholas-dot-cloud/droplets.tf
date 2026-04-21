@@ -53,7 +53,11 @@ resource "digitalocean_droplet" "web" {
   EOF
 
   lifecycle {
-    ignore_changes        = [name, user_data]
+    ignore_changes = [
+      name,
+      user_data,
+      public_networking # https://github.com/digitalocean/terraform-provider-digitalocean/issues/1524
+    ]
     create_before_destroy = true
   }
 }

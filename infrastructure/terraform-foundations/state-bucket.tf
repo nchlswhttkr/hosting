@@ -28,6 +28,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "state" {
   }
 }
 
+# TODO: Transition to S3-based state locking https://developer.hashicorp.com/terraform/language/backend/s3#state-locking
 resource "aws_dynamodb_table" "state_lock" {
   name           = "nchlswhttkr-terraform-backend"
   read_capacity  = 1
