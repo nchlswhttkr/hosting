@@ -3,8 +3,8 @@ name = "deploy"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
-    "ansible~=9.5",
-    "black~=24.4",
+    "ansible~=13.5",
+    "black~=26.3",
     "hvac~=2.2",
     "passlib~=1.7",
     "requests~=2.31",
