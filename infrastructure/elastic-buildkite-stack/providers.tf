@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.28"
+      version = "~> 6.36"
     }
 
     buildkite = {
@@ -19,7 +19,7 @@ terraform {
 
     tailscale = {
       source  = "tailscale/tailscale"
-      version = "~> 0.26.0"
+      version = "~> 0.26"
     }
 
     tls = {

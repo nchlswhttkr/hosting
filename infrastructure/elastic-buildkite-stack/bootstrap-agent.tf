@@ -32,9 +32,11 @@ resource "tailscale_federated_identity" "aws" {
   description = "Elastic Buildkite Stack"
   scopes      = ["auth_keys"]
   tags        = ["tag:auto"]
-  issuer      = local.aws_outbound_identity_federation_issuer_url
+  issuer      = data.aws_iam_outbound_web_identity_federation.current.issuer_identifier
   subject     = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${aws_cloudformation_stack.buildkite.outputs["InstanceRoleName"]}"
 }
+
+data "aws_iam_outbound_web_identity_federation" "current" {}
 
 data "aws_caller_identity" "current" {}
 
