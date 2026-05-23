@@ -1,5 +1,9 @@
 resource "aws_s3_bucket" "backups" {
   bucket = "nchlswhttkr-backups"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_s3_bucket_versioning" "backups" {
@@ -24,7 +28,6 @@ resource "aws_s3_bucket_lifecycle_configuration" "backups" {
       storage_class = "INTELLIGENT_TIERING"
       days          = 0
     }
-
   }
 }
 
