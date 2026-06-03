@@ -18,7 +18,7 @@ resource "aws_s3_object" "agent_bootstrap_script" {
 
         TAILSCALE_CLIENT_ID="$(aws ssm get-parameter --name "${aws_ssm_parameter.tailscale_client_id.name}" --query "Parameter.Value" --output "text")"
         AWS_IDENTITY_TOKEN="$(aws sts get-web-identity-token --audience "api.tailscale.com/$TAILSCALE_CLIENT_ID" --signing-algorithm "ES384" --query "WebIdentityToken" --output "text")"
-        sudo tailscale up --client-id "$TAILSCALE_CLIENT_ID" --id-token "$AWS_IDENTITY_TOKEN" --hostname "buildkite" --advertise-tags "tag:buildkite"
+        sudo tailscale up --client-id "$TAILSCALE_CLIENT_ID" --id-token "$AWS_IDENTITY_TOKEN" --hostname "buildkite" --advertise-tags "tag:buildkite" --ssh
     EOF
 }
 
