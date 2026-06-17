@@ -20,7 +20,7 @@ tailscale_status_process = subprocess.run(
 )
 tailscale_status = json.loads(tailscale_status_process.stdout)
 
-inventory = collections.defaultdict(lambda: {"hosts": []})
+inventory: dict = collections.defaultdict(lambda: {"hosts": []})
 
 for peer in tailscale_status["Peer"].values():
     if "Tags" in peer:
@@ -28,6 +28,6 @@ for peer in tailscale_status["Peer"].values():
             inventory[tag[4:].replace("-", "_")]["hosts"].append(peer["DNSName"])
 
 # https://docs.ansible.com/ansible/latest/dev_guide/developing_inventory.html#tuning-the-external-inventory-script
-inventory["_meta"] = {}
+inventory["_meta"] = {"hostvars": {}}
 
 print(json.dumps(inventory))
